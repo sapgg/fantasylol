@@ -42,7 +42,7 @@ def get_summoner_pts(summoner_id, game_id):
         if game.game_id == game_id:
             relevant_game = game
     if relevant_game == 0:
-        return -1
+        return -100
     kills = deaths = assists = creep_score = triples = quadras = pentas = bonus = 0
     if 'championsKilled' in relevant_game.stats:
         kills = relevant_game.stats['championsKilled']
@@ -87,21 +87,21 @@ while True:
     fellow_players = last_game.fellow_players
     my_team, enemy_team = split_teams(fellow_players, last_game.team_id)
     print("In {}'s last game, the team comps were:".format(summoner_name))
-    print('------------------------------------')
+    print('----------------------------------------------')
     player_fantasy_pts = get_summoner_pts(summoner.id, last_game.game_id)
-    print("{} {} {}".format(summoner_name, summoners_champ, player_fantasy_pts))
+    print("{} | {} | {:>7,.2f}".format(summoner_name.ljust(18), summoners_champ.ljust(13), player_fantasy_pts))
     summoner_names = get_summoner_names(fellow_players)
     for player in my_team:
         player_name = summoner_names[player.summoner_id]
         player_champ = champions[player.champion_id]
         player_fantasy_pts = get_summoner_pts(player.summoner_id, last_game.game_id)
-        print("{} {} {}".format(player_name.encode('utf8'), player_champ, player_fantasy_pts))
-    print('------------------VS----------------')
+        print("{} | {} | {:>7,.2f}".format(player_name.encode('utf8').ljust(18), player_champ.ljust(13), player_fantasy_pts))
+    print('----------------------VS----------------------')
     time.sleep(10)
     for player in enemy_team:
         player_name = summoner_names[player.summoner_id]
         player_champ = champions[player.champion_id]
         player_fantasy_pts = get_summoner_pts(player.summoner_id, last_game.game_id)
-        print("{} {} {}".format(player_name.encode('utf8'), player_champ, player_fantasy_pts))
-    print('------------------------------------')
+        print("{} | {} | {:>7,.2f}".format(player_name.encode('utf8').ljust(18), player_champ.ljust(13), player_fantasy_pts))
+    print('----------------------------------------------')
 

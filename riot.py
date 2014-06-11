@@ -34,12 +34,47 @@ def get_summoner_names(players):
         summoners[int(id_str)] = name_dict[id_str]
     return summoners
 
+def get_summoner_pts(summoner_id, game_id):
+    fantasy_pts = 0
+    recent_games = priot.recent_games(NORTH_AMERICA, summoner_id)
+    relevant_game = 0
+    for game in recent_games:
+        if game.game_id == game_id:
+            relevant_game = game
+    if relevant_game == 0:
+        return -1
+    kills = deaths = assists = creep_score = triples = quadras = pentas = bonus = 0
+    if 'championsKilled' in relevant_game.stats:
+        kills = relevant_game.stats['championsKilled']
+    if 'numDeaths' in relevant_game.stats:
+        deaths = relevant_game.stats['numDeaths']
+    if 'assists' in relevant_game.stats:
+        assists = relevant_game.stats['assists']
+    if 'minionsKilled' in relevant_game.stats:
+        creep_score = relevant_game.stats['minionsKilled']
+    if 'neutralMinionsKilled' in relevant_game.stats:
+        creep_score += relevant_game.stats['neutralMinionsKilled']
+    if 'tripleKills' in relevant_game.stats:
+        triples = relevant_game.stats['tripleKills']
+    if 'quadraKills' in relevant_game.stats:
+        quadras = relevant_game.stats['quadraKills']
+    if 'pentaKills' in relevant_game.stats:
+        pentas = relevant_game.stats['pentaKills']
+    if kills+deaths >= 10:
+        bonus = 2
+    fantasy_pts = 2*kills - 0.5*deaths + 1.5*assists + 0.01*creep_score + \
+        2*triples + 5*quadras + 10*pentas + bonus
+    return fantasy_pts
+
+
+
+
 champions = static_champions()
 # SUMMONER_URL = 'https://prod.api.pvp.net/api/lol/na/v1.3/summoner/by-name/{}?api_key={}'
 # r = requests.get(SUMMONER_URL.format(SUMMONER, API_KEY))
 # print r
 while True:
-    summoner_name = input('\nPlease enter a summoner name: ')
+    summoner_name = raw_input('\nPlease enter a summoner name: ')
     #summoner_name = 'w1ngw'
     priot = PyRiot(API_KEY)
     try:
@@ -53,16 +88,20 @@ while True:
     my_team, enemy_team = split_teams(fellow_players, last_game.team_id)
     print("In {}'s last game, the team comps were:".format(summoner_name))
     print('------------------------------------')
-    print("{} {}".format(summoner_name, summoners_champ))
+    player_fantasy_pts = get_summoner_pts(summoner.id, last_game.game_id)
+    print("{} {} {}".format(summoner_name, summoners_champ, player_fantasy_pts))
     summoner_names = get_summoner_names(fellow_players)
     for player in my_team:
         player_name = summoner_names[player.summoner_id]
         player_champ = champions[player.champion_id]
-        print("{} {}".format(player_name.encode('utf8'), player_champ))
+        player_fantasy_pts = get_summoner_pts(player.summoner_id, last_game.game_id)
+        print("{} {} {}".format(player_name.encode('utf8'), player_champ, player_fantasy_pts))
     print('------------------VS----------------')
+    time.sleep(10)
     for player in enemy_team:
         player_name = summoner_names[player.summoner_id]
         player_champ = champions[player.champion_id]
-        print("{} {}".format(player_name.encode('utf8'), player_champ))
+        player_fantasy_pts = get_summoner_pts(player.summoner_id, last_game.game_id)
+        print("{} {} {}".format(player_name.encode('utf8'), player_champ, player_fantasy_pts))
     print('------------------------------------')
 

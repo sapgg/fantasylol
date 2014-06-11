@@ -118,10 +118,12 @@ class Game(object):
         self.spell1 = kwargs['spell1']
         self.spell2 = kwargs['spell2']
 
-        # stats = []
-        # for stat in kwargs['statistics']:
-        #     stats.append(RawStat(**stat))
-        # self.statistics = stats
+
+        self.stats = kwargs['stats']
+        #stats = []
+        #for stat in kwargs['stats']:
+            #stats.append(RawStat(**stat))
+        #self.statistics = stats
 
         self.sub_type = kwargs['subType']
         self.team_id = kwargs['teamId']

@@ -39,7 +39,7 @@ champions = static_champions()
 # r = requests.get(SUMMONER_URL.format(SUMMONER, API_KEY))
 # print r
 while True:
-    summoner_name = input('\nPlease enter a summoner name: ')
+    summoner_name = raw_input('\nPlease enter a summoner name: ')
     #summoner_name = 'w1ngw'
     priot = PyRiot(API_KEY)
     try:

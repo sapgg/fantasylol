@@ -59,7 +59,7 @@ class Champion(object):
         self.free_to_play = kwargs['freeToPlay']
         self.id = kwargs['id']
         #self.magic_rank = kwargs['magicRank']
-      #  self.name = kwargs['name']
+        #self.name = kwargs['name']
         self.ranked_play_enabled = kwargs['rankedPlayEnabled']
 
     def __object_string(self):
@@ -93,7 +93,7 @@ class Game(object):
     mapId           int                 Map ID.
     spell1          int                 ID of first summoner spell.
     spell2          int                 ID of second summoner spell.
-    statistics      List[RawStatDto]    Statistics associated with the game for this summoner.
+    stats	        RawStatsDto	        Statistics associated with the game for this summoner.
     subType         string              Game sub-type.
     teamId          int                 Team ID associated with game.
     """
@@ -117,14 +117,7 @@ class Game(object):
         self.map_id = kwargs['mapId']
         self.spell1 = kwargs['spell1']
         self.spell2 = kwargs['spell2']
-
-
-        self.stats = kwargs['stats']
-        #stats = []
-        #for stat in kwargs['stats']:
-            #stats.append(RawStat(**stat))
-        #self.statistics = stats
-
+        self.stats = RawStat(**kwargs['stats'])
         self.sub_type = kwargs['subType']
         self.team_id = kwargs['teamId']
 
@@ -177,14 +170,233 @@ class Player(object):
 
 class RawStat(object):
     """
-    id      int Raw     stat ID.
-    name    string      Raw stat name.
-    value   int Raw     stat value.
+    assists	                int
+    barracksKilled	        int	Number of enemy inhibitors killed.
+    championsKilled	        int
+    combatPlayerScore	    int
+    consumablesPurchased	int
+    damageDealtPlayer	    int
+    doubleKills	            int
+    firstBlood	            int
+    gold	                int
+    goldEarned	    int
+    goldSpent	    int
+    item0	        int
+    item1	        int
+    item2	        int
+    item3	        int
+    item4	        int
+    item5	        int
+    item6	        int
+    itemsPurchased	int
+    killingSprees	int
+    largestCriticalStrike	    int
+    largestKillingSpree	        int
+    largestMultiKill	        int
+    legendaryItemsCreated	    int	Number of tier 3 items built.
+    level	                    int
+    magicDamageDealtPlayer	    int
+    magicDamageDealtToChampions	int
+    magicDamageTaken	        int
+    minionsDenied	            int
+    minionsKilled	            int
+    neutralMinionsKilled	    int
+    neutralMinionsKilledEnemyJungle	int
+    neutralMinionsKilledYourJungle	int
+    nexusKilled	            boolean	Flag specifying if the summoner got the killing blow on the nexus.
+    nodeCapture	            int
+    nodeCaptureAssist	    int
+    nodeNeutralize	        int
+    nodeNeutralizeAssist	int
+    numDeaths	            int
+    numItemsBought	        int
+    objectivePlayerScore	int
+    pentaKills	            int
+    physicalDamageDealtPlayer	    int
+    physicalDamageDealtToChampions	int
+    physicalDamageTaken	int
+    quadraKills	        int
+    sightWardsBought	int
+    spell1Cast	        int	Number of times first champion spell was cast.
+    spell2Cast	        int	Number of times second champion spell was cast.
+    spell3Cast	        int	Number of times third champion spell was cast.
+    spell4Cast	        int	Number of times fourth champion spell was cast.
+    summonSpell1Cast	int
+    summonSpell2Cast	int
+    superMonsterKilled	int
+    team	            int
+    teamObjective	    int
+    timePlayed	        int
+    totalDamageDealt	int
+    totalDamageDealtToChampions	int
+    totalDamageTaken	int
+    totalHeal	        int
+    totalPlayerScore	int
+    totalScoreRank	    int
+    totalTimeCrowdControlDealt	int
+    totalUnitsHealed	int
+    tripleKills	        int
+    trueDamageDealtPlayer	int
+    trueDamageDealtToChampions	int
+    trueDamageTaken	    int
+    turretsKilled	    int
+    unrealKills	        int
+    victoryPointTotal	int
+    visionWardsBought	int
+    wardKilled	        int
+    wardPlaced	        int
+    win	                boolean	Flag specifying whether or not this game was won.
     """
+
     def __init__(self, **kwargs):
-        self.id = kwargs['id']
-        self.name = kwargs['name']
-        self.value = kwargs['value']
+        if 'assists' in kwargs:
+            self.assists = kwargs['assists']
+        if 'barracksKilled' in kwargs:
+            self.barracks_killed = kwargs['barracksKilled']
+        if 'championsKilled' in kwargs:
+            self.champions_killed = kwargs['championsKilled']
+        if 'combatPlayerScore' in kwargs:
+            self.combat_player_score = kwargs['combatPlayerScore']
+        if 'consumablesPurchased' in kwargs:
+            self.consumables_purchased = kwargs['consumablesPurchased']
+        if 'damageDealtPlayer' in kwargs:
+            self.damage_dealt_player = kwargs['damageDealtPlayer']
+        if 'doubleKills' in kwargs:
+            self.double_kills = kwargs['doubleKills']
+        if 'firstBlood' in kwargs:
+            self.first_blood = kwargs['firstBlood']
+        if 'gold' in kwargs:
+            self.gold = kwargs['gold']
+        if 'goldEarned' in kwargs:
+            self.gold_earned = kwargs['goldEarned']
+        if 'goldSpent' in kwargs:
+            self.gold_spent = kwargs['goldSpent']
+        if 'item0' in kwargs:
+            self.item_0 = kwargs['item0']
+        if 'item1' in kwargs:
+            self.item_1 = kwargs['item1']
+        if 'item2' in kwargs:
+            self.item_2 = kwargs['item2']
+        if 'item3' in kwargs:
+            self.item_3 = kwargs['item3']
+        if 'item4' in kwargs:
+            self.item_4 = kwargs['item4']
+        if 'item5' in kwargs:
+            self.item_5 = kwargs['item5']
+        if 'item6' in kwargs:
+            self.item_6 = kwargs['item6']
+        if 'itemsPurchased' in kwargs:
+            self.items_purchased = kwargs['itemsPurchased']
+        if 'killingSprees' in kwargs:
+            self.killing_sprees = kwargs['killingSprees']
+        if 'largestCriticalStrike' in kwargs:
+            self.largest_critical_strike = kwargs['largestCriticalStrike']
+        if 'largestKillingSpree' in kwargs:
+            self.largest_killing_spree = kwargs['largestKillingSpree']
+        if 'largestMultiKill' in kwargs:
+            self.largest_multi_kill = kwargs['largestMultiKill']
+        if 'legendaryItemsCreated' in kwargs:
+            self.legendary_items_created = kwargs['legendaryItemsCreated']
+        if 'level' in kwargs:
+            self.level = kwargs['level']
+        if 'magicDamageDealtPlayer' in kwargs:
+            self.magic_damage_dealt_player = kwargs['magicDamageDealtPlayer']
+        if 'magicDamageDealtToChampions' in kwargs:
+            self.magic_damage_dealt_to_champions = kwargs['magicDamageDealtToChampions']
+        if 'magicDamageTaken' in kwargs:
+            self.magic_damage_taken = kwargs['magicDamageTaken']
+        if 'minionsDenied' in kwargs:
+            self.minions_denied = kwargs['minionsDenied']
+        if 'minionsKilled' in kwargs:
+            self.minions_killed = kwargs['minionsKilled']
+        if 'neutralMinionsKilled' in kwargs:
+            self.neutral_minions_killed = kwargs['neutralMinionsKilled']
+        if 'neutralMinionsKilledEnemyJungle' in kwargs:
+            self.neutral_minions_killed_enemy_jungle = kwargs['neutralMinionsKilledEnemyJungle']
+        if 'neutralMinionsKilledYourJungle' in kwargs:
+            self.neutral_minions_killed_your_jungle = kwargs['neutralMinionsKilledYourJungle']
+        if 'nexusKilled' in kwargs:
+            self.nexus_killed = kwargs['nexusKilled']
+        if 'nodeCapture' in kwargs:
+            self.node_capture = kwargs['nodeCapture']
+        if 'nodeCaptureAssist' in kwargs:
+            self.node_capture_assist = kwargs['nodeCaptureAssist']
+        if 'nodeNeutralize' in kwargs:
+            self.node_neutralize = kwargs['nodeNeutralize']
+        if 'nodeNeutralizeAssist' in kwargs:
+            self.node_neutralize_assist = kwargs['nodeNeutralizeAssist']
+        if 'numDeaths' in kwargs:
+            self.num_deaths = kwargs['numDeaths']
+        if 'numItemsBought' in kwargs:
+            self.num_items_bought = kwargs['numItemsBought']
+        if 'objectivePlayerScore' in kwargs:
+            self.objective_player_score = kwargs['objectivePlayerScore']
+        if 'pentaKills' in kwargs:
+            self.penta_kills = kwargs['pentaKills']
+        if 'physicalDamageDealtPlayer' in kwargs:
+            self.physical_damage_dealt_player = kwargs['physicalDamageDealtPlayer']
+        if 'physicalDamageDealtToChampions' in kwargs:
+            self.physical_damage_dealt_to_champions = kwargs['physicalDamageDealtToChampions']
+        if 'PhysicalDamageTaken' in kwargs:
+            self.physical_damage_taken = kwargs['PhysicalDamageTaken']
+        if 'quadraKills' in kwargs:
+            self.quadra_kills = kwargs['quadraKills']
+        if 'sightWardsBought' in kwargs:
+            self.sight_wards_bought = kwargs['sightWardsBought']
+        if 'spell1Cast' in kwargs:
+            self.spell_1_cast = kwargs['spell1Cast']
+        if 'spell2Cast' in kwargs:
+            self.spell_2_cast = kwargs['spell2Cast']
+        if 'spell3Cast' in kwargs:
+            self.spell_3_cast = kwargs['spell3Cast']
+        if 'spell4Cast' in kwargs:
+            self.spell_4_cast = kwargs['spell4Cast']
+        if 'summonSpell1Cast' in kwargs:
+            self.summon_spell_1_cast = kwargs['summonSpell1Cast']
+        if 'summonSpell2Cast' in kwargs:
+            self.sumon_spell_2_cast = kwargs['summonSpell2Cast']
+        if 'superMonsterKilled' in kwargs:
+            self.super_monster_killed = kwargs['superMonsterKilled']
+        if 'team' in kwargs:
+            self.team = kwargs['team']
+        if 'teamObjective' in kwargs:
+            self.team_objective = kwargs['teamObjective']
+        if 'timePlayed' in kwargs:
+            self.time_played = kwargs['timePlayed']
+        if 'totalDamageDealt' in kwargs:
+            self.total_damage_dealt = kwargs['totalDamageDealt']
+        if 'totalDamageDealtToChampions' in kwargs:
+            self.total_damage_dealt_to_champions = kwargs['totalDamageDealtToChampions']
+        if 'totalDamageTaken' in kwargs:
+            self.total_damage_taken = kwargs['totalDamageTaken']
+        if 'totalHeal' in kwargs:
+            self.total_heal = kwargs['totalHeal']
+        if 'totalPlayerScore' in kwargs:
+            self.total_player_score = kwargs['totalPlayerScore']
+        if 'totalScoreRank' in kwargs:
+            self.total_score_rank = kwargs['totalScoreRank']
+        if 'totalTimeCrowdControlDealt' in kwargs:
+            self.total_time_crowd_control_dealt = kwargs['totalTimeCrowdControlDealt']
+        if 'totalUnitsHealed' in kwargs:
+            self.total_units_healed = kwargs['totalUnitsHealed']
+        if 'tripleKills' in kwargs:
+            self.triple_kills = kwargs['tripleKills']
+        if 'trueDamageTaken' in kwargs:
+            self.true_damage_taken = kwargs['trueDamageTaken']
+        if 'turretsKilled' in kwargs:
+            self.turrets_killed = kwargs['turretsKilled']
+        if 'unrealKills' in kwargs:
+            self.unreal_kills = kwargs['unrealKills']
+        if 'victoryPointTotal' in kwargs:
+            self.victory_point_total = kwargs['victoryPointTotal']
+        if 'visionWardsBought' in kwargs:
+            self.vision_wards_bought = kwargs['visionWardsBought']
+        if 'wardKilled' in kwargs:
+            self.ward_killed = kwargs['wardKilled']
+        if 'wardPlaced' in kwargs:
+            self.ward_placed = kwargs['wardPlaced']
+        if 'win' in kwargs:
+            self.win = kwargs['win']
 
     def __object_string(self):
         objdict = self.__dict__
@@ -1003,6 +1215,502 @@ class TeamStatDetail(object):
         self.losses = kwargs['losses']
         self.team_stat_type = kwargs['teamStatType']
         self.wins = kwargs['wins']
+
+    def __object_string(self):
+        objdict = self.__dict__
+        object_string = ''
+        for key in objdict:
+            object_string = object_string + '{0}: {1}\n'.format(key, objdict[key])
+
+        return object_string
+
+    def __repr__(self):
+        return self.__object_string()
+
+    def __str__(self):
+        return self.__object_string()
+
+    def __unicode__(self):
+        return self.__object_string()
+
+
+class Static(object):
+    """
+    Holds data return from pyriot.static_champions()
+
+    data	Map[string, ChampionDto]
+    format	string
+    keys	Map[string, string]
+    type	string
+    version	string
+
+    ChampionDto => class StaticChampion
+    """
+    def __init__(self, **kwargs):
+
+        data = {}
+        for key, value in kwargs['data'].iteritems():
+            data[key] = StaticChampion(**value)
+        self.data = data
+
+        self.format = kwargs['format']
+
+        keys = {}
+        for key, value in kwargs['keys'].iteritems():
+            data[key] = value
+        self.keys = keys
+
+        self.type = kwargs['type']
+        self.version = kwargs['version']
+
+    def __object_string(self):
+        objdict = self.__dict__
+        object_string = ''
+        for key in objdict:
+            object_string = object_string + '{0}: {1}\n'.format(key, objdict[key])
+
+        return object_string
+
+    def __repr__(self):
+        return self.__object_string()
+
+    def __str__(self):
+        return self.__object_string()
+
+    def __unicode__(self):
+        return self.__object_string()
+
+
+class StaticChampion(object):
+    """
+    allytips	List[string]
+    blurb	    string
+    enemytips	List[string]
+    id	        int
+    image	    ImageDto
+    info    	InfoDto
+    key	        string
+    lore	    string
+    name	    string
+    partype	    string
+    passive	    PassiveDto
+    recommended	List[RecommendedDto]
+    skins	    List[SkinDto]
+    spells	    List[ChampionSpellDto]
+    stats   	StatsDto
+    tags	    List[string]
+    title   	string
+
+    ImageDto         => class Image
+    InfoDto          => class Info
+    PassiveDto       => class Passive
+    RecommendedDto   => class Recommended
+    SkinDto          => class Skin
+    ChampionSpellDto => class Spell
+    StatsDto         => class Stats
+    """
+
+    def __init__(self, **kwargs):
+        ally_tips = []
+        #for ally_tip in kwargs['allytips']:
+            # ally_tips.append(ally_tip)
+        # self.ally_tips = ally_tips
+
+        # self.blurb = kwargs['blurb']
+
+        # enemy_tips = []
+        # for enemy_tip in kwargs['enemytips']:
+        #     enemy_tips.append(enemy_tip)
+        # self.enemy_tips = enemy_tips
+
+        self.id = kwargs['id']
+        # self.image = Image(**kwargs['image'])
+        # self.info = Info(**kwargs['info'])
+        self.key = kwargs['key']
+        # self.lore = kwargs['lore']
+        self.name = kwargs['name']
+        # self.partype = kwargs['partype']
+        # self.passive = Passive(**kwargs['passive'])
+
+        # recommended = []
+        # for rec in kwargs['recommended']:
+        #     recommended.append(Recommended(**rec))
+        # self.recommended = recommended
+
+        # skins = []
+        # for skin in kwargs['skins']:
+        #     skins.append(Skin(**skin))
+        # self.skins = skins
+
+        # spells = []
+        # for spell in kwargs['spell']:
+        #     spells.append(Spell(**spell))
+        # self.spells = spells
+
+        # self.stats = Stats(**kwargs['stats'])
+
+        # tags = []
+        # for tag in kwargs['tags']:
+        #     tags.append(kwargs['tags'])
+        # self.tags = tags
+
+        self.title = kwargs['title']
+
+    def __object_string(self):
+        objdict = self.__dict__
+        object_string = ''
+        for key in objdict:
+            object_string = object_string + '{0}: {1}\n'.format(key, objdict[key])
+
+        return object_string
+
+    def __repr__(self):
+        return self.__object_string()
+
+    def __str__(self):
+        return self.__object_string()
+
+    def __unicode__(self):
+        return self.__object_string()
+
+
+class Image(object):
+    """
+    full	string
+    group	string
+    h	    int
+    sprite	string
+    w	    int
+    x	    int
+    y	    int
+    """
+    def __init__(self, **kwargs):
+        self.full = kwargs['full']
+        self.group = kwargs['group']
+        self.h = kwargs['h']
+        self.sprite = kwargs['sprite']
+        self.v = kwargs['v']
+        self.x = kwargs['x']
+        self.y = kwargs['y']
+
+    def __object_string(self):
+        objdict = self.__dict__
+        object_string = ''
+        for key in objdict:
+            object_string = object_string + '{0}: {1}\n'.format(key, objdict[key])
+
+        return object_string
+
+    def __repr__(self):
+        return self.__object_string()
+
+    def __str__(self):
+        return self.__object_string()
+
+    def __unicode__(self):
+        return self.__object_string()
+
+
+class Info(object):
+    """
+    attack	    int
+    defense	    int
+    difficulty	int
+    magic	    int
+    """
+    def __init__(self, **kwargs):
+        self.attack = kwargs['attack']
+        self.defense = kwargs['defense']
+        self.difficulty = kwargs['difficulty']
+        self.magic = kwargs['magic']
+
+    def __object_string(self):
+        objdict = self.__dict__
+        object_string = ''
+        for key in objdict:
+            object_string = object_string + '{0}: {1}\n'.format(key, objdict[key])
+
+        return object_string
+
+    def __repr__(self):
+        return self.__object_string()
+
+    def __str__(self):
+        return self.__object_string()
+
+    def __unicode__(self):
+        return self.__object_string()
+
+
+class Passive(object):
+    """
+    description	            string
+    image	                ImageDto
+    name	                string
+    sanitizedDescription	string
+
+    ImageDto => class Image
+    """
+
+    def __init__(self, **kwargs):
+        self.description = kwargs['description']
+        self.image = Image(**kwargs['image'])
+        self.name = kwargs['name']
+        self.sanitized_description = kwargs['sanitizedDescription']
+
+    def __object_string(self):
+        objdict = self.__dict__
+        object_string = ''
+        for key in objdict:
+            object_string = object_string + '{0}: {1}\n'.format(key, objdict[key])
+
+        return object_string
+
+    def __repr__(self):
+        return self.__object_string()
+
+    def __str__(self):
+        return self.__object_string()
+
+    def __unicode__(self):
+        return self.__object_string()
+
+
+class Recommended(object):
+    """
+    blocks	    List[BlockDto]
+    champion	string
+    map	        string
+    mode	    string
+    priority	boolean
+    title   	string
+    type	    string
+
+    BlockDto => class Block
+    """
+
+    def __init__(self, **kwargs):
+        blocks = []
+        for block in kwargs['blocks']:
+            blocks.append(Block(**block))
+        self.blocks = blocks
+
+        self.champion = kwargs['champion']
+        self.map = kwargs['map']
+        self.mode = kwargs['mode']
+        self.priority = kwargs['priority']
+        self.title = kwargs['title']
+        self.type = kwargs['type']
+
+    def __object_string(self):
+        objdict = self.__dict__
+        object_string = ''
+        for key in objdict:
+            object_string = object_string + '{0}: {1}\n'.format(key, objdict[key])
+
+        return object_string
+
+    def __repr__(self):
+        return self.__object_string()
+
+    def __str__(self):
+        return self.__object_string()
+
+    def __unicode__(self):
+        return self.__object_string()
+
+
+class Spell(object):
+    """
+    *** NOT DONE WITH INIT ***
+
+    ChampionSpellDto
+    altimages	    List[ImageDto]
+    cooldown	    List[double]
+    cooldownBurn	string
+    cost	        List[int]
+    costBurn	    string
+    costType	    string
+    description	    string
+    effect	        List[object]	This field is a List of List of Integer.
+    effectBurn	    List[string]
+    image       	ImageDto
+    key	            string
+    leveltip	    LevelTipDto
+    maxrank	        int
+    name	        string
+    range	        object	This field is either a List of Integer or the String 'self' for spells that target one's own champion.
+    rangeBurn	    string
+    resource	    string
+    sanitizedDescription	string
+    sanitizedTooltip	    string
+    tooltip	        string
+    vars	        List[SpellVarsDto]
+
+    ImageDto     => class Image
+    LevelTipDto  => class LevelTip
+    SpellVarsDto => class SpellVars
+    """
+    def __init__(self, **kwargs):
+        self.image = Image(**kwargs['image'])
+        self.key = kwargs['key']
+        self.tooltip = kwargs['tooltip']
+
+    def __object_string(self):
+        objdict = self.__dict__
+        object_string = ''
+        for key in objdict:
+            object_string = object_string + '{0}: {1}\n'.format(key, objdict[key])
+
+        return object_string
+
+    def __repr__(self):
+        return self.__object_string()
+
+    def __str__(self):
+        return self.__object_string()
+
+    def __unicode__(self):
+        return self.__object_string()
+
+
+class Skin(object):
+    """
+    id	    int
+    name	string
+    num	    int
+    """
+
+    def __init__(self, **kwargs):
+        self.id = kwargs['id']
+        self.name = kwargs['name']
+        self.num = kwargs['num']
+
+    def __object_string(self):
+        objdict = self.__dict__
+        object_string = ''
+        for key in objdict:
+            object_string = object_string + '{0}: {1}\n'.format(key, objdict[key])
+
+        return object_string
+
+    def __repr__(self):
+        return self.__object_string()
+
+    def __str__(self):
+        return self.__object_string()
+
+    def __unicode__(self):
+        return self.__object_string()
+
+
+class Stats(object):
+    """
+    armor	                double
+    armorperlevel	        double
+    attackdamage	        double
+    attackdamageperlevel	double
+    attackrange	            double
+    attackspeedoffset	    double
+    attackspeedperlevel	    double
+    crit	                double
+    critperlevel	        double
+    hp	                    double
+    hpperlevel	            double
+    hpregen	                double
+    hpregenperlevel	        double
+    movespeed	            double
+    mp	                    double
+    mpperlevel	            double
+    mpregen	                double
+    mpregenperlevel	        double
+    spellblock	            double
+    spellblockperlevel	    double
+    """
+
+    def __init__(self, **kwargs):
+        self.armor = kwargs['armor']
+        self.armor_per_level = kwargs['armorperlevel']
+        self.attack_damage = kwargs['attackdamage']
+        self.attack_damage_per_level = kwargs['attackdamageperlevel']
+        self.attack_range = kwargs['attackrange']
+        self.attack_speed_offset = kwargs['attackspeedoffset']
+        self.attack_speed_per_level = kwargs['attackspeedperlevel']
+        self.crit = kwargs['crit']
+        self.crit_per_level = kwargs['critperlevel']
+        self.hp = kwargs['hp']
+        self.hp_per_level = kwargs['hpperlevel']
+        self.hp_regen = kwargs['hpregen']
+        self.hp_regen_per_level = kwargs['hpregenperlevel']
+        self.move_speed = kwargs['movespeed']
+        self.mp = kwargs['mp']
+        self.mp_per_level = kwargs['mpperlevel']
+        self.mp_regen = kwargs['mpregen']
+        self.mp_regen_per_level = kwargs['mpregenperlevel']
+        self.spell_block = kwargs['spellblock']
+        self.spell_block_per_level = kwargs['spellblockperlevel']
+
+    def __object_string(self):
+        objdict = self.__dict__
+        object_string = ''
+        for key in objdict:
+            object_string = object_string + '{0}: {1}\n'.format(key, objdict[key])
+
+        return object_string
+
+    def __repr__(self):
+        return self.__object_string()
+
+    def __str__(self):
+        return self.__object_string()
+
+    def __unicode__(self):
+        return self.__object_string()
+
+
+class Block(object):
+    """
+    items	List[BlockItemDto]
+    recMath	boolean
+    type	string
+
+    BlockItemDto => class BlockItem
+    """
+    def __init__(self, **kwargs):
+        items = []
+        for item in kwargs['items']:
+            items.append(BlockItem(**item))
+        self.items = items
+
+        self.rec_math = kwargs['recMath']
+        self.type = kwargs['type']
+
+    def __object_string(self):
+        objdict = self.__dict__
+        object_string = ''
+        for key in objdict:
+            object_string = object_string + '{0}: {1}\n'.format(key, objdict[key])
+
+        return object_string
+
+    def __repr__(self):
+        return self.__object_string()
+
+    def __str__(self):
+        return self.__object_string()
+
+    def __unicode__(self):
+        return self.__object_string()
+
+
+class BlockItem(object):
+    """
+    count	int
+    id	    int
+    """
+    def __init__(self, **kwargs):
+        self.count = kwargs['count']
+        self.id = kwargs['id']
 
     def __object_string(self):
         objdict = self.__dict__

@@ -34,15 +34,10 @@ class PyRiot:
         returns dictionary of champions keyed on champion id
 
         active              boolean     Indicates if the champion is active.
-        attackRank          int         Champion attack rank.
         botEnabled          boolean     Bot enabled flag (for custom games).
         botMmEnabled        boolean     Bot Match Made enabled flag (for Co-op vs. AI games).
-        defenseRank         int         Champion defense rank.
-        difficultyRank      int         Champion difficulty rank.
         freeToPlay          boolean     Indicates if the champion is free to play. Free to play champions are rotated periodically.
         id                  long        Champion ID.
-        magicRank           int         Champion magic rank.
-        name                string      Champion name.
         rankedPlayEnabled   boolean     Ranked play enabled flag.
 
         throws HTTPError
@@ -51,8 +46,8 @@ class PyRiot:
         url = '{0}/{1}/{2}/champion?freeToPlay={3}&api_key={4}'.format(
                 self.base_url, 
                 region, 
-                CHAMPION_VERSION, 
-                free_to_play, 
+                CHAMPION_VERSION,
+                free_to_play,
                 self.api_key)
 
         response = requests.get(url)
@@ -64,6 +59,209 @@ class PyRiot:
             champions[champion['id']] = api_classes.Champion(**champion)     
 
         return champions
+
+    def static_champions(self, region):
+        """
+        All static information for each champion
+
+        returns dictionary of champions' static data keyed on champion id
+
+        data	Map[string, ChampionDto]
+        format	string
+        keys	Map[string, string]
+        type	string
+        version	string
+
+        ChampionDto:
+        allytips	List[string]
+        blurb	    string
+        enemytips	List[string]
+        id	        int
+        image	    ImageDto
+        info    	InfoDto
+        key	        string
+        lore	    string
+        name	    string
+        partype	    string
+        passive	    PassiveDto
+        recommended	List[RecommendedDto]
+        skins	    List[SkinDto]
+        spells	    List[ChampionSpellDto]
+        stats   	StatsDto
+        tags	    List[string]
+        title   	string
+
+        ChampionSpellDto
+        altimages	    List[ImageDto]
+        cooldown	    List[double]
+        cooldownBurn	string
+        cost	        List[int]
+        costBurn	    string
+        costType	    string
+        description	    string
+        effect	        List[object]	This field is a List of List of Integer.
+        effectBurn	    List[string]
+        image       	ImageDto
+        key	            string
+        leveltip	    LevelTipDto
+        maxrank	        int
+        name	        string
+        range	        object	This field is either a List of Integer or the String 'self' for spells that target one's own champion.
+        rangeBurn	    string
+        resource	    string
+        sanitizedDescription	string
+        sanitizedTooltip	    string
+        tooltip	        string
+        vars	        List[SpellVarsDto]
+
+        ImageDto
+        full	string
+        group	string
+        h	    int
+        sprite	string
+        w	    int
+        x	    int
+        y	    int
+
+        InfoDto
+        attack	    int
+        defense	    int
+        difficulty	int
+        magic	    int
+
+        PassiveDto
+        description	            string
+        image	                ImageDto
+        name	                string
+        sanitizedDescription	string
+
+        RecommendedDto
+        blocks	    List[BlockDto]
+        champion	string
+        map	        string
+        mode	    string
+        priority	boolean
+        title   	string
+        type	    string
+
+        SkinDto
+        id	    int
+        name	string
+        num	    int
+
+        StatsDto
+        armor	                double
+        armorperlevel	        double
+        attackdamage	        double
+        attackdamageperlevel	double
+        attackrange	            double
+        attackspeedoffset	    double
+        attackspeedperlevel	    double
+        crit	                double
+        critperlevel	        double
+        hp	                    double
+        hpperlevel	            double
+        hpregen	                double
+        hpregenperlevel	        double
+        movespeed	            double
+        mp	                    double
+        mpperlevel	            double
+        mpregen	                double
+        mpregenperlevel	        double
+        spellblock	            double
+        spellblockperlevel	    double
+
+        SpellVarsDto
+        coeff	    List[double]
+        dyn	        string
+        key	        string
+        link	    string
+        ranksWith	string
+
+        BlockDto
+        items	List[BlockItemDto]
+        recMath	boolean
+        type	string
+
+        BlockItemDto
+        count	int
+        id	    int
+        """
+
+        url = '{0}/static-data/{1}/{2}/champion?api_key={3}'.format(
+                self.base_url,
+                region,
+                STATIC_VERSION,
+                self.api_key)
+        response = requests.get(url)
+        response.raise_for_status()
+        content = response.json()
+
+        champions = dict()
+        for champion in content['data']:
+            champions[content['data'][champion]['id']] = api_classes.StaticChampion(**content['data'][champion])
+
+        return champions
+
+    def leagues(self, region, summoner_id):
+        """
+        League information for summoner.
+
+        region: Region where to retrieve the data. Use the constants included in this package.
+        summoner_id: Summoner ID.
+
+        returns Map[string, LeagueDto]
+
+        LeageDto
+        entries     List[LeagueItemDto]
+        name        string
+        queue       string                  (legal values: RANKED_SOLO_5x5, RANKED_TEAM_3x3, RANKED_TEAM_5x5)
+        tier        string                  (legal values: CHALLENGER, DIAMOND, PLATINUM, GOLD, SILVER, BRONZE)
+
+        LeagueItemDto
+        isFreshBlood        boolean
+        isHotStreak         boolean
+        isInactive          boolean
+        isVeteran           boolean
+        lastPlayed          long
+        leagueName          string
+        leaguePoints        int
+        miniSeries          MiniSeriesDto
+        playerOrTeamId      string
+        playerOrTeamName    string
+        queueType           string
+        rank                string
+        tier                string
+        wins                int
+
+        MiniSeriesDto
+        losses                  int
+        progress                Array[char]
+        target                  int
+        timeLeftToPlayMillis    long
+        wins                    int
+
+        throws HTTPError
+        """
+
+        url = '{0}/{1}/{2}/league/by-summoner/{3}?api_key={4}'.format(
+                self.base_url,
+                region,
+                LEAGUE_VERSION,
+                summoner_id,
+                self.api_key)
+
+        response = requests.get(url)
+        response.raise_for_status()
+        content = response.json()
+
+        leagues = dict()
+        for league_id in content:
+            league = api_classes.League(**content[league_id])
+
+            leagues[league_id] = league
+
+        return leagues
 
     def recent_games(self, region, summoner_id):
         """
@@ -119,66 +317,6 @@ class PyRiot:
 
         return games
 
-    def leagues(self, region, summoner_id):
-        """
-        League information for summoner.
-
-        region: Region where to retrieve the data. Use the constants included in this package.
-        summoner_id: Summoner ID.
-
-        returns Map[string, LeagueDto]
-
-        LeageDto
-        entries     List[LeagueItemDto] 
-        name        string  
-        queue       string                  (legal values: RANKED_SOLO_5x5, RANKED_TEAM_3x3, RANKED_TEAM_5x5)
-        tier        string                  (legal values: CHALLENGER, DIAMOND, PLATINUM, GOLD, SILVER, BRONZE)
-
-        LeagueItemDto
-        isFreshBlood        boolean 
-        isHotStreak         boolean 
-        isInactive          boolean 
-        isVeteran           boolean 
-        lastPlayed          long    
-        leagueName          string  
-        leaguePoints        int 
-        miniSeries          MiniSeriesDto   
-        playerOrTeamId      string  
-        playerOrTeamName    string  
-        queueType           string  
-        rank                string  
-        tier                string  
-        wins                int
-
-        MiniSeriesDto
-        losses                  int 
-        progress                Array[char] 
-        target                  int 
-        timeLeftToPlayMillis    long    
-        wins                    int
-
-        throws HTTPError
-        """
-
-        url = '{0}/{1}/{2}/league/by-summoner/{3}?api_key={4}'.format(
-                self.base_url,
-                region,
-                LEAGUE_VERSION,
-                summoner_id,
-                self.api_key)
-
-        response = requests.get(url)
-        response.raise_for_status()
-        content = response.json()
-
-        leagues = dict()
-        for league_id in content:
-            league = api_classes.League(**content[league_id])
-
-            leagues[league_id] = league
-
-        return leagues
-
     def stats_summary(self, region, summoner_id, season=None):
         """
         Summoner stat summary
@@ -210,48 +348,48 @@ class PyRiot:
         averageObjectivePlayerScore     int     Dominion only.
         averageTeamObjective            int     Dominion only.
         averageTotalPlayerScore         int     Dominion only.
-        botGamesPlayed                  int 
-        killingSpree                    int 
+        botGamesPlayed                  int
+        killingSpree                    int
         maxAssists                      int     Dominion only.
-        maxChampionsKilled              int     
+        maxChampionsKilled              int
         maxCombatPlayerScore            int     Dominion only.
-        maxLargestCriticalStrike        int 
-        maxLargestKillingSpree          int 
+        maxLargestCriticalStrike        int
+        maxLargestKillingSpree          int
         maxNodeCapture                  int     Dominion only.
         maxNodeCaptureAssist            int     Dominion only.
         maxNodeNeutralize               int     Dominion only.
         maxNodeNeutralizeAssist         int     Dominion only.
         maxObjectivePlayerScore         int     Dominion only.
         maxTeamObjective                int     Dominion only.
-        maxTimePlayed                   int 
-        maxTimeSpentLiving              int 
+        maxTimePlayed                   int
+        maxTimeSpentLiving              int
         maxTotalPlayerScore             int     Dominion only.
-        mostChampionKillsPerSession     int 
-        mostSpellsCast                  int 
-        normalGamesPlayed               int 
-        rankedPremadeGamesPlayed        int 
-        rankedSoloGamesPlayed           int 
-        totalAssists                    int 
-        totalChampionKills              int 
-        totalDamageDealt                int 
-        totalDamageTaken                int 
-        totalDoubleKills                int 
-        totalFirstBlood                 int 
-        totalGoldEarned                 int 
-        totalHeal                       int 
-        totalMagicDamageDealt           int 
-        totalMinionKills                int 
-        totalNeutralMinionsKilled       int 
+        mostChampionKillsPerSession     int
+        mostSpellsCast                  int
+        normalGamesPlayed               int
+        rankedPremadeGamesPlayed        int
+        rankedSoloGamesPlayed           int
+        totalAssists                    int
+        totalChampionKills              int
+        totalDamageDealt                int
+        totalDamageTaken                int
+        totalDoubleKills                int
+        totalFirstBlood                 int
+        totalGoldEarned                 int
+        totalHeal                       int
+        totalMagicDamageDealt           int
+        totalMinionKills                int
+        totalNeutralMinionsKilled       int
         totalNodeCapture                int     Dominion only.
         totalNodeNeutralize             int     Dominion only.
-        totalPentaKills                 int 
-        totalPhysicalDamageDealt        int 
-        totalQuadraKills                int 
-        totalSessionsLost               int 
-        totalSessionsPlayed             int 
-        totalSessionsWon                int 
-        totalTripleKills                int 
-        totalTurretsKilled              int 
+        totalPentaKills                 int
+        totalPhysicalDamageDealt        int
+        totalQuadraKills                int
+        totalSessionsLost               int
+        totalSessionsPlayed             int
+        totalSessionsWon                int
+        totalTripleKills                int
+        totalTurretsKilled              int
         totalUnrealKills                int
 
         throws HTTPError
@@ -307,48 +445,48 @@ class PyRiot:
         averageObjectivePlayerScore     int     Dominion only.
         averageTeamObjective            int     Dominion only.
         averageTotalPlayerScore         int     Dominion only.
-        botGamesPlayed                  int 
-        killingSpree                    int 
+        botGamesPlayed                  int
+        killingSpree                    int
         maxAssists                      int     Dominion only.
-        maxChampionsKilled              int     
+        maxChampionsKilled              int
         maxCombatPlayerScore            int     Dominion only.
-        maxLargestCriticalStrike        int 
-        maxLargestKillingSpree          int 
+        maxLargestCriticalStrike        int
+        maxLargestKillingSpree          int
         maxNodeCapture                  int     Dominion only.
         maxNodeCaptureAssist            int     Dominion only.
         maxNodeNeutralize               int     Dominion only.
         maxNodeNeutralizeAssist         int     Dominion only.
         maxObjectivePlayerScore         int     Dominion only.
         maxTeamObjective                int     Dominion only.
-        maxTimePlayed                   int 
-        maxTimeSpentLiving              int 
+        maxTimePlayed                   int
+        maxTimeSpentLiving              int
         maxTotalPlayerScore             int     Dominion only.
-        mostChampionKillsPerSession     int 
-        mostSpellsCast                  int 
-        normalGamesPlayed               int 
-        rankedPremadeGamesPlayed        int 
-        rankedSoloGamesPlayed           int 
-        totalAssists                    int 
-        totalChampionKills              int 
-        totalDamageDealt                int 
-        totalDamageTaken                int 
-        totalDoubleKills                int 
-        totalFirstBlood                 int 
-        totalGoldEarned                 int 
-        totalHeal                       int 
-        totalMagicDamageDealt           int 
-        totalMinionKills                int 
-        totalNeutralMinionsKilled       int 
+        mostChampionKillsPerSession     int
+        mostSpellsCast                  int
+        normalGamesPlayed               int
+        rankedPremadeGamesPlayed        int
+        rankedSoloGamesPlayed           int
+        totalAssists                    int
+        totalChampionKills              int
+        totalDamageDealt                int
+        totalDamageTaken                int
+        totalDoubleKills                int
+        totalFirstBlood                 int
+        totalGoldEarned                 int
+        totalHeal                       int
+        totalMagicDamageDealt           int
+        totalMinionKills                int
+        totalNeutralMinionsKilled       int
         totalNodeCapture                int     Dominion only.
         totalNodeNeutralize             int     Dominion only.
-        totalPentaKills                 int 
-        totalPhysicalDamageDealt        int 
-        totalQuadraKills                int 
-        totalSessionsLost               int 
-        totalSessionsPlayed             int 
-        totalSessionsWon                int 
-        totalTripleKills                int 
-        totalTurretsKilled              int 
+        totalPentaKills                 int
+        totalPhysicalDamageDealt        int
+        totalQuadraKills                int
+        totalSessionsLost               int
+        totalSessionsPlayed             int
+        totalSessionsWon                int
+        totalTripleKills                int
+        totalTurretsKilled              int
         totalUnrealKills                int
 
         throws HTTPError

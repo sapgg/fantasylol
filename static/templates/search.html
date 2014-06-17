@@ -2,6 +2,16 @@
 
 {% block content %}
 <div class="col-sm-12" style="text-align: center;">
-<h1>You have searched!</h1>
+    <h2> Here are the fantasy points for {{summoner_name}}'s last game: </h2>
+    <h2>My Team</h2>
+        {% for player in ally_data %}
+            <p>{{ player.name }} | {{ player.champion }} | {{ player.points }}</p>
+        {% endfor %}
+        <p><em>Team total: {{ ally_total }}</em></p>
+    <h2>Enemy Team</h2>
+        {% for player in enemy_data %}
+            <p>{{ player.name }} | {{ player.champion }} | {{ player.points }}</p>
+        {% endfor %}
+        <p><em>Enemy team total: {{ enemy_total }}</em></p>
 </div>
 {% endblock %}

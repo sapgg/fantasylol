@@ -1,8 +1,6 @@
-import requests
-from pyriot.wrapper import PyRiot, NORTH_AMERICA
-import time
+from wrapper import NORTH_AMERICA
 
-API_KEY = 'a22e3d70-3a1d-4b70-8563-005066d86de6'
+#API_KEY = 'a22e3d70-3a1d-4b70-8563-005066d86de6'
 
 def split_teams(fellow_players, my_team_id):
     my_team = []
@@ -14,7 +12,7 @@ def split_teams(fellow_players, my_team_id):
             enemy_team.append(player)
     return my_team, enemy_team
 
-def get_summoner_names(players):
+def get_summoner_names(priot, players):
     player_ids = ''
     summoners = dict()
     for player in players:
@@ -25,7 +23,7 @@ def get_summoner_names(players):
         summoners[int(id_str)] = name_dict[id_str]
     return summoners
 
-def get_summoner_pts(summoner_id, game_id):
+def get_summoner_pts(priot, summoner_id, game_id):
     """
     Player Score:
     Kills      2    pts
@@ -37,7 +35,6 @@ def get_summoner_pts(summoner_id, game_id):
     Penta     10 Bonus pts
     10+ K/A    2 Bonus pts
     """
-
     fantasy_pts = 0
     recent_games = priot.recent_games(NORTH_AMERICA, summoner_id)
     relevant_game = 0
@@ -70,12 +67,15 @@ def get_summoner_pts(summoner_id, game_id):
         fantasy_pts += 2
     return fantasy_pts
 
+
+"""
 priot = PyRiot(API_KEY)
 champions = priot.static_champions(NORTH_AMERICA)
 
 # SUMMONER_URL = 'https://prod.api.pvp.net/api/lol/na/v1.3/summoner/by-name/{}?api_key={}'
 # r = requests.get(SUMMONER_URL.format(SUMMONER, API_KEY))
 # print r
+
 
 while True:
 
@@ -112,4 +112,4 @@ while True:
         print("{} | {} | {:>7,.2f}".format(player_name.encode('utf8').ljust(18), player_champ.name.ljust(13), player_fantasy_pts))
     print('----------------------------------------------')
 
-
+"""

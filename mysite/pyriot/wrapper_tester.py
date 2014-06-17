@@ -1,6 +1,7 @@
-import requests
-from pyriot.wrapper import PyRiot, NORTH_AMERICA
 import time
+
+from wrapper import PyRiot, NORTH_AMERICA
+
 
 API_KEY = 'a22e3d70-3a1d-4b70-8563-005066d86de6'
 

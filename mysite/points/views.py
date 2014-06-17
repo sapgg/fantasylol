@@ -14,7 +14,7 @@ def home(request):
 
     if form.is_valid():
         global summoner_name
-        summoner_name = form.cleaned_data['summoner_name']
+        summoner_name = (form.cleaned_data['summoner_name']).replace(" ", "")
 
         #save_it = form.save(commit=False)
         #save_it.save()

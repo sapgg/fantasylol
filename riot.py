@@ -4,7 +4,6 @@ import time
 
 API_KEY = 'a22e3d70-3a1d-4b70-8563-005066d86de6'
 
-
 def split_teams(fellow_players, my_team_id):
     my_team = []
     enemy_team = []
@@ -71,20 +70,25 @@ def get_summoner_pts(summoner_id, game_id):
         fantasy_pts += 2
     return fantasy_pts
 
+priot = PyRiot(API_KEY)
+champions = priot.static_champions(NORTH_AMERICA)
 
 # SUMMONER_URL = 'https://prod.api.pvp.net/api/lol/na/v1.3/summoner/by-name/{}?api_key={}'
 # r = requests.get(SUMMONER_URL.format(SUMMONER, API_KEY))
 # print r
+
 while True:
+
     summoner_name = raw_input('\nPlease enter a summoner name: ')
     #summoner_name = 'w1ngw'
-    priot = PyRiot(API_KEY)
-    champions = priot.static_champions(NORTH_AMERICA)
     try:
         summoner = priot.summoner_get_by_name(NORTH_AMERICA, summoner_name.lower())
     except TypeError as e:
         print("Error. {} could not be found. (Riot's API seems to be case sensitive...".format(summoner_name))
         continue
+
+    #leagues = priot.leagues(NORTH_AMERICA, summoner.id)
+
     last_game = priot.recent_games(NORTH_AMERICA, summoner.id)[0]
     summoners_champ = champions[last_game.champion_id]
     fellow_players = last_game.fellow_players
@@ -107,4 +111,5 @@ while True:
         player_fantasy_pts = get_summoner_pts(player.summoner_id, last_game.game_id)
         print("{} | {} | {:>7,.2f}".format(player_name.encode('utf8').ljust(18), player_champ.name.ljust(13), player_fantasy_pts))
     print('----------------------------------------------')
+
 

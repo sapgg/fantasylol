@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import utils
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 class Summoner(object):
     """
@@ -426,7 +429,7 @@ class League(object):
     def __init__(self, **kwargs):
         entries = []
         for entry in kwargs['entries']:
-            entries.append(LeagueItem(**entry))
+            entries.append(LeagueEntry(**entry))
         self.entries = entries
 
         self.name = kwargs['name']
@@ -451,7 +454,7 @@ class League(object):
         return self.__object_string()
 
 
-class LeagueItem(object):
+class LeagueEntry(object):
     """
     isFreshBlood        boolean 
     isHotStreak         boolean 
@@ -469,12 +472,11 @@ class LeagueItem(object):
     wins                int
     """
     def __init__(self, **kwargs):
+        self.division = kwargs['division']
         self.is_fresh_blood = kwargs['isFreshBlood']
         self.is_hot_streak = kwargs['isHotStreak']
         self.is_inactive = kwargs['isInactive']
         self.is_veteran = kwargs['isVeteran']
-        self.last_played = kwargs['lastPlayed']
-        self.league_name = kwargs['leagueName']
         self.league_points = kwargs['leaguePoints']
 
         if 'miniSeries' in kwargs:
@@ -482,9 +484,6 @@ class LeagueItem(object):
 
         self.player_or_team_id = kwargs['playerOrTeamId']
         self.player_or_team_name = kwargs['playerOrTeamName']
-        self.queue_type = kwargs['queueType']
-        self.rank = kwargs['rank']
-        self.tier = kwargs['tier']
         self.wins = kwargs['wins']
 
     def __object_string(self):
@@ -517,7 +516,6 @@ class MiniSeries(object):
         self.losses = kwargs['losses']
         self.progress = kwargs['progress']
         self.target = kwargs['target']
-        self.time_left_to_play_millis = kwargs['timeLeftToPlayMillis']
         self.wins = kwargs['wins']
 
     def __object_string(self):
@@ -548,7 +546,8 @@ class PlayerStatsSummary(object):
     """
     def __init__(self, **kwargs):
         self.aggregated_stats = AggregatedStats(**kwargs['aggregatedStats'])
-        self.losses = kwargs['losses']
+        if 'losses' in kwargs:
+            self.losses = kwargs['losses']
         self.modify_date = utils.convert_epoch_millis_to_datetime(kwargs['modifyDate'])
         self.player_stat_summary_type = kwargs['playerStatSummaryType']
         self.wins = kwargs['wins']
@@ -612,7 +611,6 @@ class ChampionStats(object):
     """
     def __init__(self, **kwargs):
         self.id = kwargs['id']
-        self.name = kwargs['name']
         self.stats = AggregatedStats(**kwargs['stats'])
 
     def __object_string(self):
@@ -925,8 +923,8 @@ class RuneSlot(object):
     runeSlotId      int         Rune slot ID.
     """
     def __init__(self, **kwargs):
-        self.rune = Rune(**kwargs['rune'])
-        self.id = kwargs['runeSlotId']
+        self.rune_id = kwargs['runeId']
+        self.slot_id = kwargs['runeSlotId']
 
     def __object_string(self):
         objdict = self.__dict__
@@ -1006,16 +1004,18 @@ class Team(object):
         for match in kwargs['matchHistory']:
             match_history.append(MatchHistorySummary(**match))
         self.match_history = match_history
-
-        if 'messageOfDay' in kwargs:
-            self.message_of_day = MessageOfDay(**kwargs['messageOfDay'])
         self.modify_date = utils.convert_epoch_millis_to_datetime(kwargs['modifyDate'])
         self.name = kwargs['name']
         self.roster = Roster(**kwargs['roster'])
         self.second_last_join_date = utils.convert_epoch_millis_to_datetime(kwargs['secondLastJoinDate'])
         self.status = kwargs['status']
         self.tag = kwargs['tag']
-        self.team_stat_summary = TeamStatSummary(**kwargs['teamStatSummary'])
+
+        team_stat_details = []
+        for stat_detail in kwargs['teamStatDetails']:
+            team_stat_details.append(TeamStatDetail(**stat_detail))
+        self.team_stat_details = team_stat_details
+
         self.third_last_join_date = utils.convert_epoch_millis_to_datetime(kwargs['thirdLastJoinDate'])
 
     def __object_string(self):
@@ -1139,18 +1139,19 @@ class Roster(object):
         return self.__object_string()
 
 
-class TeamStatSummary(object):
+class TeamStatDetail(object):
     """
-    fullId              string  
-    teamStatDetails     Set[TeamStatDetailDto]
+    averageGamesPlayed  int
+    losses              int
+    teamStatType        string
+    wins                int
     """
     def __init__(self, **kwargs):
-        self.full_id = kwargs['fullId']
+        self.average_games_played = kwargs['averageGamesPlayed']
+        self.losses = kwargs['losses']
+        self.team_stat_type = kwargs['teamStatType']
+        self.wins = kwargs['wins']
 
-        team_stat_details = []
-        for team_stat_detail in kwargs['teamStatDetails']:
-            team_stat_details.append(TeamStatDetail(**team_stat_detail))
-        self.team_stat_details = team_stat_details
 
     def __object_string(self):
         objdict = self.__dict__
@@ -1182,39 +1183,6 @@ class TeamMemberInfo(object):
         self.join_date = utils.convert_epoch_millis_to_datetime(kwargs['joinDate'])
         self.player_id = kwargs['playerId']
         self.status = kwargs['status']
-
-    def __object_string(self):
-        objdict = self.__dict__
-        object_string = ''
-        for key in objdict:
-            object_string = object_string + '{0}: {1}\n'.format(key, objdict[key])
-
-        return object_string
-
-    def __repr__(self):
-        return self.__object_string()
-
-    def __str__(self):
-        return self.__object_string()
-
-    def __unicode__(self):
-        return self.__object_string()
-
-
-class TeamStatDetail(object):
-    """
-    averageGamesPlayed      int 
-    fullId                  string  
-    losses                  int 
-    teamStatType            string  
-    wins                    int
-    """
-    def __init__(self, **kwargs):
-        self.average_games_played = kwargs['averageGamesPlayed']
-        self.full_id = kwargs['fullId']
-        self.losses = kwargs['losses']
-        self.team_stat_type = kwargs['teamStatType']
-        self.wins = kwargs['wins']
 
     def __object_string(self):
         objdict = self.__dict__
@@ -1525,16 +1493,16 @@ class Spell(object):
     *** NOT DONE WITH INIT ***
 
     ChampionSpellDto
-    altimages	    List[ImageDto]
-    cooldown	    List[double]
-    cooldownBurn	string
-    cost	        List[int]
-    costBurn	    string
-    costType	    string
-    description	    string
-    effect	        List[object]	This field is a List of List of Integer.
-    effectBurn	    List[string]
-    image       	ImageDto
+    altimages       List[ImageDto]
+    cooldown        List[double]
+    cooldownBurn    string
+    cost            List[int]
+    costBurn        string
+    costType        string
+    description     string
+    effect          List[object]	This field is a List of List of Integer.
+    effectBurn      List[string]
+    image           ImageDto
     key	            string
     leveltip	    LevelTipDto
     maxrank	        int

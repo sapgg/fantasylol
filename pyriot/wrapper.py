@@ -7,11 +7,11 @@ import api_classes
 # Change version as needed
 CHAMPION_VERSION = 'v1.2'
 GAME_VERSION = 'v1.3'
-LEAGUE_VERSION = 'v2.3'
+LEAGUE_VERSION = 'v2.4'
 STATIC_VERSION = 'v1.2'
 STATS_VERSION = 'v1.3'
 SUMMONER_VERSION = 'v1.4'
-TEAM_VERSION = 'v2.2'
+TEAM_VERSION = 'v2.3'
 
 NORTH_AMERICA = 'na'
 EUROPE_WEST = 'euw'
@@ -59,6 +59,120 @@ class PyRiot:
             champions[champion['id']] = api_classes.Champion(**champion)     
 
         return champions
+
+    def leagues(self, region, summoner_id):
+        """
+        League information for summoner.
+
+        region: Region where to retrieve the data. Use the constants included in this package.
+        summoner_id: Summoner ID.
+
+        returns Map[string, LeagueDto]
+
+        LeageDto
+        entries     List[LeagueItemDto]
+        name        string
+        queue       string                  (legal values: RANKED_SOLO_5x5, RANKED_TEAM_3x3, RANKED_TEAM_5x5)
+        tier        string                  (legal values: CHALLENGER, DIAMOND, PLATINUM, GOLD, SILVER, BRONZE)
+
+        LeagueItemDto
+        isFreshBlood        boolean
+        isHotStreak         boolean
+        isInactive          boolean
+        isVeteran           boolean
+        lastPlayed          long
+        leagueName          string
+        leaguePoints        int
+        miniSeries          MiniSeriesDto
+        playerOrTeamId      string
+        playerOrTeamName    string
+        queueType           string
+        rank                string
+        tier                string
+        wins                int
+
+        MiniSeriesDto
+        losses                  int
+        progress                Array[char]
+        target                  int
+        timeLeftToPlayMillis    long
+        wins                    int
+
+        throws HTTPError
+        """
+
+        url = '{0}/{1}/{2}/league/by-summoner/{3}?api_key={4}'.format(
+                self.base_url,
+                region,
+                LEAGUE_VERSION,
+                summoner_id,
+                self.api_key)
+
+        response = requests.get(url)
+        response.raise_for_status()
+        content = response.json()
+
+        leagues = dict()
+        for index, league_id in enumerate(content[str(summoner_id)]):
+            league = api_classes.League(**league_id)
+
+            leagues[index] = league
+
+        return leagues
+
+    def recent_games(self, region, summoner_id):
+        """
+        List of recent games played (max 10).
+
+        region: Region where to retrieve the data. Use the constants included in this package.
+        summoner_id: Summoner ID.
+
+        returns list of recent games played by Summoner
+
+        championId      int                 Champion ID associated with game.
+        createDate      long                Date that end game data was recorded, specified as epoch milliseconds.
+        fellowPlayers   List[PlayerDto]     Other players associated with the game.
+        gameId          long                Game ID.
+        gameMode        string              Game mode.
+        gameType        string              Game type.
+        invalid         boolean             Invalid flag.
+        level           int                 Level.
+        mapId           int                 Map ID.
+        spell1          int                 ID of first summoner spell.
+        spell2          int                 ID of second summoner spell.
+        statistics      List[RawStatDto]    Statistics associated with the game for this summoner.
+        subType         string              Game sub-type.
+        teamId          int                 Team ID associated with game.
+
+        PlayerDto
+        championId  int     Champion id associated with player.
+        summonerId  long    Summoner id associated with player.
+        teamId      int     Team id associated with player.
+
+        RawStatDto
+        id      int Raw     stat ID.
+        name    string      Raw stat name.
+        value   int Raw     stat value.
+
+        throws HTTPError
+        """
+
+        url = '{0}/{1}/{2}/game/by-summoner/{3}/recent?api_key={4}'.format(
+                self.base_url,
+                region,
+                GAME_VERSION,
+                summoner_id,
+                self.api_key)
+
+        response = requests.get(url)
+        response.raise_for_status()
+        content = response.json()
+
+        games = []
+        for game in content['games']:
+            games.append(api_classes.Game(**game))
+
+        return games
 
     def static_champions(self, region):
         """
@@ -203,119 +317,98 @@ class PyRiot:
 
         return champions
 
-    def leagues(self, region, summoner_id):
+    def stats_ranked(self, region, summoner_id, season=None):
         """
-        League information for summoner.
+        Summoner ranked stats
 
         region: Region where to retrieve the data. Use the constants included in this package.
         summoner_id: Summoner ID.
 
-        returns Map[string, LeagueDto]
+        returns list of player ranked stats
 
-        LeageDto
-        entries     List[LeagueItemDto]
-        name        string
-        queue       string                  (legal values: RANKED_SOLO_5x5, RANKED_TEAM_3x3, RANKED_TEAM_5x5)
-        tier        string                  (legal values: CHALLENGER, DIAMOND, PLATINUM, GOLD, SILVER, BRONZE)
+        champions       List[ChampionStatsDto]      List of aggregated stats summarized by champion.
+        modifyDate      long                        Date stats were last modified specified as epoch milliseconds.
+        summonerId      long                        Summoner ID.
 
-        LeagueItemDto
-        isFreshBlood        boolean
-        isHotStreak         boolean
-        isInactive          boolean
-        isVeteran           boolean
-        lastPlayed          long
-        leagueName          string
-        leaguePoints        int
-        miniSeries          MiniSeriesDto
-        playerOrTeamId      string
-        playerOrTeamName    string
-        queueType           string
-        rank                string
-        tier                string
-        wins                int
+        ChampionStatsDto
+        id          int                     Champion id.
+        name        string                  Champion name.
+        stats       AggregatedStatsDto      Aggregated stats associated with the champion.
 
-        MiniSeriesDto
-        losses                  int
-        progress                Array[char]
-        target                  int
-        timeLeftToPlayMillis    long
-        wins                    int
+        AggregatedStatsDto
+        averageAssists                  int     Dominion only.
+        averageChampionsKilled          int     Dominion only.
+        averageCombatPlayerScore        int     Dominion only.
+        averageNodeCapture              int     Dominion only.
+        averageNodeCaptureAssist        int     Dominion only.
+        averageNodeNeutralize           int     Dominion only.
+        averageNodeNeutralizeAssist     int     Dominion only.
+        averageNumDeaths                int     Dominion only.
+        averageObjectivePlayerScore     int     Dominion only.
+        averageTeamObjective            int     Dominion only.
+        averageTotalPlayerScore         int     Dominion only.
+        botGamesPlayed                  int
+        killingSpree                    int
+        maxAssists                      int     Dominion only.
+        maxChampionsKilled              int
+        maxCombatPlayerScore            int     Dominion only.
+        maxLargestCriticalStrike        int
+        maxLargestKillingSpree          int
+        maxNodeCapture                  int     Dominion only.
+        maxNodeCaptureAssist            int     Dominion only.
+        maxNodeNeutralize               int     Dominion only.
+        maxNodeNeutralizeAssist         int     Dominion only.
+        maxObjectivePlayerScore         int     Dominion only.
+        maxTeamObjective                int     Dominion only.
+        maxTimePlayed                   int
+        maxTimeSpentLiving              int
+        maxTotalPlayerScore             int     Dominion only.
+        mostChampionKillsPerSession     int
+        mostSpellsCast                  int
+        normalGamesPlayed               int
+        rankedPremadeGamesPlayed        int
+        rankedSoloGamesPlayed           int
+        totalAssists                    int
+        totalChampionKills              int
+        totalDamageDealt                int
+        totalDamageTaken                int
+        totalDoubleKills                int
+        totalFirstBlood                 int
+        totalGoldEarned                 int
+        totalHeal                       int
+        totalMagicDamageDealt           int
+        totalMinionKills                int
+        totalNeutralMinionsKilled       int
+        totalNodeCapture                int     Dominion only.
+        totalNodeNeutralize             int     Dominion only.
+        totalPentaKills                 int
+        totalPhysicalDamageDealt        int
+        totalQuadraKills                int
+        totalSessionsLost               int
+        totalSessionsPlayed             int
+        totalSessionsWon                int
+        totalTripleKills                int
+        totalTurretsKilled              int
+        totalUnrealKills                int
 
         throws HTTPError
         """
 
-        url = '{0}/{1}/{2}/league/by-summoner/{3}?api_key={4}'.format(
+        url = '{0}/{1}/{2}/stats/by-summoner/{3}/ranked?api_key={4}'.format(
                 self.base_url,
                 region,
-                LEAGUE_VERSION,
+                STATS_VERSION,
                 summoner_id,
                 self.api_key)
+
+        if season:
+            url += '&season=SEASON{0}'.format(season)
 
         response = requests.get(url)
         response.raise_for_status()
         content = response.json()
 
-        leagues = dict()
-        for league_id in content:
-            league = api_classes.League(**content[league_id])
-
-            leagues[league_id] = league
-
-        return leagues
-
-    def recent_games(self, region, summoner_id):
-        """
-        List of recent games played (max 10).
-
-        region: Region where to retrieve the data. Use the constants included in this package.
-        summoner_id: Summoner ID.
-
-        returns list of recent games played by Summoner
-
-        championId      int                 Champion ID associated with game.
-        createDate      long                Date that end game data was recorded, specified as epoch milliseconds.
-        fellowPlayers   List[PlayerDto]     Other players associated with the game.
-        gameId          long                Game ID.
-        gameMode        string              Game mode.
-        gameType        string              Game type.
-        invalid         boolean             Invalid flag.
-        level           int                 Level.
-        mapId           int                 Map ID.
-        spell1          int                 ID of first summoner spell.
-        spell2          int                 ID of second summoner spell.
-        statistics      List[RawStatDto]    Statistics associated with the game for this summoner.
-        subType         string              Game sub-type.
-        teamId          int                 Team ID associated with game.
-
-        PlayerDto
-        championId  int     Champion id associated with player.
-        summonerId  long    Summoner id associated with player.
-        teamId      int     Team id associated with player.
-
-        RawStatDto
-        id      int Raw     stat ID.
-        name    string      Raw stat name.
-        value   int Raw     stat value.
-
-        throws HTTPError
-        """
-
-        url = '{0}/{1}/{2}/game/by-summoner/{3}/recent?api_key={4}'.format(
-                self.base_url,
-                region,
-                GAME_VERSION,
-                summoner_id,
-                self.api_key)
-
-        response = requests.get(url)
-        response.raise_for_status()
-        content = response.json()
-
-        games = []
-        for game in content['games']:
-            games.append(api_classes.Game(**game))
-
-        return games
+        return api_classes.PlayerRankedStats(**content)
 
     def stats_summary(self, region, summoner_id, season=None):
         """
@@ -415,99 +508,6 @@ class PyRiot:
 
         return player_stat_summaries
 
-    def stats_ranked(self, region, summoner_id, season=None):
-        """
-        Summoner ranked stats
-
-        region: Region where to retrieve the data. Use the constants included in this package.
-        summoner_id: Summoner ID.
-
-        returns list of player ranked stats
-
-        champions       List[ChampionStatsDto]      List of aggregated stats summarized by champion.
-        modifyDate      long                        Date stats were last modified specified as epoch milliseconds.
-        summonerId      long                        Summoner ID.
-
-        ChampionStatsDto
-        id          int                     Champion id.
-        name        string                  Champion name.
-        stats       AggregatedStatsDto      Aggregated stats associated with the champion.
-
-        AggregatedStatsDto
-        averageAssists                  int     Dominion only.
-        averageChampionsKilled          int     Dominion only.
-        averageCombatPlayerScore        int     Dominion only.
-        averageNodeCapture              int     Dominion only.
-        averageNodeCaptureAssist        int     Dominion only.
-        averageNodeNeutralize           int     Dominion only.
-        averageNodeNeutralizeAssist     int     Dominion only.
-        averageNumDeaths                int     Dominion only.
-        averageObjectivePlayerScore     int     Dominion only.
-        averageTeamObjective            int     Dominion only.
-        averageTotalPlayerScore         int     Dominion only.
-        botGamesPlayed                  int
-        killingSpree                    int
-        maxAssists                      int     Dominion only.
-        maxChampionsKilled              int
-        maxCombatPlayerScore            int     Dominion only.
-        maxLargestCriticalStrike        int
-        maxLargestKillingSpree          int
-        maxNodeCapture                  int     Dominion only.
-        maxNodeCaptureAssist            int     Dominion only.
-        maxNodeNeutralize               int     Dominion only.
-        maxNodeNeutralizeAssist         int     Dominion only.
-        maxObjectivePlayerScore         int     Dominion only.
-        maxTeamObjective                int     Dominion only.
-        maxTimePlayed                   int
-        maxTimeSpentLiving              int
-        maxTotalPlayerScore             int     Dominion only.
-        mostChampionKillsPerSession     int
-        mostSpellsCast                  int
-        normalGamesPlayed               int
-        rankedPremadeGamesPlayed        int
-        rankedSoloGamesPlayed           int
-        totalAssists                    int
-        totalChampionKills              int
-        totalDamageDealt                int
-        totalDamageTaken                int
-        totalDoubleKills                int
-        totalFirstBlood                 int
-        totalGoldEarned                 int
-        totalHeal                       int
-        totalMagicDamageDealt           int
-        totalMinionKills                int
-        totalNeutralMinionsKilled       int
-        totalNodeCapture                int     Dominion only.
-        totalNodeNeutralize             int     Dominion only.
-        totalPentaKills                 int
-        totalPhysicalDamageDealt        int
-        totalQuadraKills                int
-        totalSessionsLost               int
-        totalSessionsPlayed             int
-        totalSessionsWon                int
-        totalTripleKills                int
-        totalTurretsKilled              int
-        totalUnrealKills                int
-
-        throws HTTPError
-        """
-
-        url = '{0}/{1}/{2}/stats/by-summoner/{3}/ranked?api_key={4}'.format(
-                self.base_url,
-                region,
-                STATS_VERSION,
-                summoner_id,
-                self.api_key)
-
-        if season:
-            url += '&season=SEASON{0}'.format(season)
-
-        response = requests.get(url)
-        response.raise_for_status()
-        content = response.json()
-
-        return api_classes.PlayerRankedStats(**content)
-
     def summoner_masteries(self, region, summoner_id):
         """
         Summoner mastery pages
@@ -546,7 +546,7 @@ class PyRiot:
         content = response.json()
 
         mastery_pages = []
-        for page in content['pages']:
+        for page in content[str(summoner_id)]['pages']:
             mastery_pages.append(api_classes.MasteryPage(**page))
 
         return mastery_pages
@@ -594,41 +594,10 @@ class PyRiot:
         content = response.json()
 
         rune_pages = []
-        for page in content['pages']:
+        for page in content[str(summoner_id)]['pages']:
             rune_pages.append(api_classes.RunePage(**page))
 
         return rune_pages
-
-    def summoner_get_by_name(self, region, summoner_name):
-        """
-        Get summoner by name
-
-        region: Region where to retrieve the data. Use the constants included in this package.
-        summoner_name: Summoner name.
-
-        returns summoner information for summoner with specified name
-
-        id              long        Summoner ID.
-        name            string      Summoner name.
-        profileIconId   int         ID of the summoner icon associated with the summoner.
-        revisionDate    long        Date summoner was last modified specified as epoch milliseconds.
-        summonerLevel   long        Summoner level associated with the summoner.
-
-        throws HTTPError
-        """
-
-        url = '{0}/{1}/{2}/summoner/by-name/{3}?api_key={4}'.format(
-                self.base_url,
-                region,
-                SUMMONER_VERSION,
-                summoner_name,
-                self.api_key)
-
-        response = requests.get(url)
-        response.raise_for_status()
-        content = response.json()
-
-        return api_classes.Summoner(**content.get(summoner_name))
 
     def summoner_get_by_id(self, region, summoner_id):
         """
@@ -660,6 +629,37 @@ class PyRiot:
         content = response.json()
 
         return api_classes.Summoner(**content.get('{0}'.format(summoner_id)))
+
+    def summoner_get_by_name(self, region, summoner_name):
+        """
+        Get summoner by name
+
+        region: Region where to retrieve the data. Use the constants included in this package.
+        summoner_name: Summoner name.
+
+        returns summoner information for summoner with specified name
+
+        id              long        Summoner ID.
+        name            string      Summoner name.
+        profileIconId   int         ID of the summoner icon associated with the summoner.
+        revisionDate    long        Date summoner was last modified specified as epoch milliseconds.
+        summonerLevel   long        Summoner level associated with the summoner.
+
+        throws HTTPError
+        """
+
+        url = '{0}/{1}/{2}/summoner/by-name/{3}?api_key={4}'.format(
+                self.base_url,
+                region,
+                SUMMONER_VERSION,
+                summoner_name,
+                self.api_key)
+
+        response = requests.get(url)
+        response.raise_for_status()
+        content = response.json()
+
+        return api_classes.Summoner(**content.get(summoner_name))
 
     def summoner_get_names_for_ids(self, region, summoner_ids):
         """
@@ -769,7 +769,7 @@ class PyRiot:
         content = response.json()
 
         teams = []
-        for team in content:
+        for team in content[str(summoner_id)]:
             teams.append(api_classes.Team(**team))
 
         return teams

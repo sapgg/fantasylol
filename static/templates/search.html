@@ -1,24 +1,68 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="col-sm-12" style="text-align: center;">
+
+
+<div class="scoring">
+    <table>
+        <tr>
+            <th colspan="3">Scoring</th>
+        </tr>
+        <tr>
+            <th>Abbr.</th>
+            <th>Meaning</th>
+            <th>Points</th>
+        </tr>
+        <tr>
+            <td>K</td>
+            <td>Kills</td>
+            <td>2 pts</td>
+        </tr>
+        <tr>
+            <td>D</td>
+            <td>Deaths</td>
+            <td>-0.5 pts</td>
+        </tr>
+        <tr>
+            <td>A</td>
+            <td>Assists</td>
+            <td>1.5 pts</td>
+        </tr>
+        <tr>
+            <td>CS</td>
+            <td>Creep Score</td>
+            <td>0.01 pts</td>
+        </tr>
+        <tr>
+            <td>T</td>
+            <td>Triples</td>
+            <td>+2 pts/ea</td>
+        </tr>
+        <tr>
+            <td>Q</td>
+            <td>Quadras</td>
+            <td>+5 pts/ea</td>
+        </tr>
+        <tr>
+            <td>P</td>
+            <td>Pentas</td>
+            <td>+10 pts/ea</td>
+        </tr>
+        <tr>
+            <td>B</td>
+            <td>Bonus</td>
+            <td>+2 pts if K+A >= 10</td>
+        </tr>
+    </table>
+</div>
+
+<div class="container" style="text-align: center">
     <h2> Here are the fantasy points for {{summoner_name}}'s last game: </h2>
-    <p>Scoring</p>
-    <ul>
-        <li>K = Kills = 2 pts</li>
-        <li>D = Deaths = -0.5 pts</li>
-        <li>A = Assists = 1.5 pts</li>
-        <li>CS = Creep Score = 0.01 pts</li>
-        <li>T = Triples = +2 pts/ea</li>
-        <li>Q = Quadras = +5 pts/ea</li>
-        <li>P = Pentas = +10 pts/ea</li>
-        <li>B = Bonus = +2 pts if K+A >= 10</li>
-    </ul>
     <h2>My Team</h2>
     {% if win %}
-    <p> VICTORY!! </p>
+    <p style="color:green"> VICTORY!! </p>
     {% else %}
-    <p> DEFEAT!! </p>
+    <p style="color:red"> DEFEAT!! </p>
     {% endif %}
         {% for player in ally_data %}
             <p>{{ player.name }} | {{ player.champion }} | K = {{player.kills}}
@@ -32,9 +76,9 @@
     <h2>Enemy Team</h2>
 
     {% if win %}
-    <p> DEFEAT!! </p>
+    <p style="color:red"> DEFEAT!! </p>
     {% else %}
-    <p> VICTORY!! </p>
+    <p style="color:green"> VICTORY!! </p>
     {% endif %}
         {% for player in enemy_data %}
             <p>{{ player.name }} | {{ player.champion }} | K = {{player.kills}}

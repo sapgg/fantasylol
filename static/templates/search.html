@@ -3,6 +3,11 @@
 {% block content %}
 
 
+
+<div class="container" style="text-align: center">
+    <h2> Here are the fantasy points for {{summoner_name}}'s last game: </h2>
+
+
 <div class="scoring">
     <table>
         <tr>
@@ -55,9 +60,6 @@
         </tr>
     </table>
 </div>
-
-<div class="container" style="text-align: center">
-    <h2> Here are the fantasy points for {{summoner_name}}'s last game: </h2>
 
     <table>
         {% if win %}

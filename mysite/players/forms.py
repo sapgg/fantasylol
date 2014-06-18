@@ -1,7 +1,7 @@
 from django import forms
-from .models import Point
+from .models import Player
 
-class PointForm(forms.Form):
+class PlayerForm(forms.Form):
     #class Meta:
     #  model = Point
     summoner_name = forms.CharField(max_length=20)

@@ -1,7 +1,7 @@
 import time
 
 from django.shortcuts import render_to_response, RequestContext, HttpResponseRedirect
-from .forms import PointForm
+from .forms import PlayerForm
 from pyriot.wrapper import PyRiot, NORTH_AMERICA
 from pyriot.riot import split_teams, get_summoner_pts, get_summoner_names
 
@@ -10,7 +10,7 @@ summoner_name = ""
 
 # Create your views here.
 def home(request):
-    form = PointForm(request.POST or None)
+    form = PlayerForm(request.POST or None)
 
     if form.is_valid():
         global summoner_name

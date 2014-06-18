@@ -3,7 +3,7 @@ from django.utils.encoding import smart_unicode
 
 # Create your models here.
 
-class Point(models.Model):
+class Player(models.Model):
     summoner_name = models.CharField(max_length=120)
 
     def __unicode__(self):

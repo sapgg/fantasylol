@@ -71,10 +71,10 @@ def search(request):
             enemy_data.append(summ_info)
 
         ally_totals_info = calc_totals(ally_data)
-        ally_totals_info.name = "Allied Team Totals"
+        ally_totals_info.name = "Team Totals"
         ally_data.append(ally_totals_info)
         enemy_totals_info = calc_totals(enemy_data)
-        enemy_totals_info.name = "Enemy Team Totals"
+        enemy_totals_info.name = "Team Totals"
         enemy_data.append(enemy_totals_info)
 
         return render_to_response("search.html",

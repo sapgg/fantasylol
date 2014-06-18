@@ -16,7 +16,7 @@
         <tr>
             <td>K</td>
             <td>Kills</td>
-            <td>2 pts</td>
+            <td>+2 pts</td>
         </tr>
         <tr>
             <td>D</td>
@@ -26,12 +26,12 @@
         <tr>
             <td>A</td>
             <td>Assists</td>
-            <td>1.5 pts</td>
+            <td>+1.5 pts</td>
         </tr>
         <tr>
             <td>CS</td>
             <td>Creep Score</td>
-            <td>0.01 pts</td>
+            <td>+0.01 pts</td>
         </tr>
         <tr>
             <td>T</td>
@@ -58,21 +58,97 @@
 
 <div class="container" style="text-align: center">
     <h2> Here are the fantasy points for {{summoner_name}}'s last game: </h2>
-    <h2>My Team</h2>
-    {% if win %}
-    <p style="color:green"> VICTORY!! </p>
-    {% else %}
-    <p style="color:red"> DEFEAT!! </p>
-    {% endif %}
-        {% for player in ally_data %}
-            <p>{{ player.name }} | {{ player.champion }} | K = {{player.kills}}
-                | D = {{player.deaths}} | A = {{player.assists}}
-                | CS = {{player.creep_score}} | T = {{player.triples}}
-                | Q = {{player.quadras}} | P = {{player.pentas}}
-                | B = {{player.bonus}}
-                | FANTASY POINTS = {{player.fantasy_points}}</p>
-        {% endfor %}
 
+    <table>
+        {% if win %}
+            <tr>
+                <th colspan="11" style="color:green">VICTORY!!</th>
+            </tr>
+        {% else %}
+            <tr>
+                <th colspan="11" style="color:red">DEFEAT!!</th>
+            </tr>
+        {% endif %}
+
+
+        <tr>
+            <th colspan="11">{{summoner_name}}'s Team</th>
+        </tr>
+        <tr style="font-size: 25px">
+            <th>Summoner Name</th>
+            <th>Champion</th>
+            <th>K</th>
+            <th>D</th>
+            <th>A</th>
+            <th>CS</th>
+            <th>T</th>
+            <th>Q</th>
+            <th>P</th>
+            <th>B</th>
+            <th>Fantasy Points</th>
+        </tr>
+        {% for player in ally_data %}
+            <tr>
+                <td>{{ player.name }}</td>
+                <td>{{ player.champion }}</td>
+                <td>{{player.kills}}</td>
+                <td>{{player.deaths}}</td>
+                <td>{{player.assists}}</td>
+                <td>{{player.creep_score}}</td>
+                <td>{{player.triples}}</td>
+                <td>{{player.quadras}}</td>
+                <td>{{player.pentas}}</td>
+                <td>{{player.bonus}}</td>
+                <td>{{player.fantasy_points}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <table style="margin-top: 30px">
+        {% if win %}
+            <tr>
+                <th colspan="11" style="color:red">DEFEAT!!</th>
+            </tr>
+        {% else %}
+            <tr>
+                <th colspan="11" style="color:green">VICTORY!!</th>
+            </tr>
+        {% endif %}
+
+
+        <tr>
+            <th colspan="11">Enemy Team</th>
+        </tr>
+        <tr style="font-size: 25px">
+            <th>Summoner Name</th>
+            <th>Champion</th>
+            <th>K</th>
+            <th>D</th>
+            <th>A</th>
+            <th>CS</th>
+            <th>T</th>
+            <th>Q</th>
+            <th>P</th>
+            <th>B</th>
+            <th>Fantasy Points</th>
+        </tr>
+        {% for player in enemy_data %}
+            <tr>
+                <td>{{ player.name }}</td>
+                <td>{{ player.champion }}</td>
+                <td>{{player.kills}}</td>
+                <td>{{player.deaths}}</td>
+                <td>{{player.assists}}</td>
+                <td>{{player.creep_score}}</td>
+                <td>{{player.triples}}</td>
+                <td>{{player.quadras}}</td>
+                <td>{{player.pentas}}</td>
+                <td>{{player.bonus}}</td>
+                <td>{{player.fantasy_points}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+<!--
     <h2>Enemy Team</h2>
 
     {% if win %}
@@ -88,6 +164,6 @@
                 | B = {{player.bonus}}
                 | FANTASY POINTS = {{player.fantasy_points}}</p>
         {% endfor %}
-
+-->
 </div>
 {% endblock %}

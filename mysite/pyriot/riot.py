@@ -63,6 +63,7 @@ class SummGameInfo(object):
     def __unicode__(self):
         return self.__object_string()
 
+
 def split_teams(fellow_players, my_team_id):
     my_team = []
     enemy_team = []

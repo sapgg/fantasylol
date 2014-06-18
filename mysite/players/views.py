@@ -3,7 +3,7 @@ import time
 from django.shortcuts import render_to_response, RequestContext, HttpResponseRedirect
 from .forms import PlayerForm
 from pyriot.wrapper import PyRiot, NORTH_AMERICA
-from pyriot.riot import split_teams, get_summoner_pts, get_summoner_names
+from pyriot.riot import split_teams, get_summ_info, get_summoner_names, calc_totals, SummGameInfo
 
 API_KEY = 'a22e3d70-3a1d-4b70-8563-005066d86de6'
 summoner_name = ""
@@ -23,7 +23,7 @@ def home(request):
         #### so we don't need to use global variable
         return HttpResponseRedirect('/search/')
     else:
-        return render_to_response("point.html",
+        return render_to_response("homepage.html",
                               locals(),
                               context_instance=RequestContext(request))
 
@@ -31,15 +31,10 @@ def home(request):
 def search(request):
     # process summoner name
     global summoner_name
-    class Info(object):
-        def __init__(self, name, champion, points):
-            self.name = name
-            self.champion = champion
-            self.points = points
 
     priot = PyRiot(API_KEY)
     champions = priot.static_champions(NORTH_AMERICA)
-try:
+    #try:
     summoner = priot.summoner_get_by_name(NORTH_AMERICA, summoner_name.lower())
     last_game = priot.recent_games(NORTH_AMERICA, summoner.id)[0]
     summoners_champ = champions[last_game.champion_id]
@@ -71,20 +66,6 @@ try:
         summ_info.champion = champions[player.champion_id].name
         summ_info.calc_fantasy_pts()
         enemy_data.append(summ_info)
-        
-        return render_to_response(  "search.html",
-                                    {"summoner_name": summoner_name,
-                                    "ally_data": ally_data,
-                                    "ally_totals_info": ally_totals_info,
-                                    "enemy_data": enemy_data,
-                                    "enemy_totals_info": enemy_totals_info  },
-                                    context_instance=RequestContext(request))
-    
-    except Exception as e:
-        #TODO: Catch the correct exception. We don't want to do this for EVERY exception.
-        return render_to_response(  "invalid_summoner_error.html",
-                            {   "summoner_name": summoner_name  },
-                            context_instance=RequestContext(request))
 
     ally_totals_info = calc_totals(ally_data)
     ally_totals_info.name = "Allied Team Totals"
@@ -93,13 +74,22 @@ try:
     enemy_totals_info.name = "Enemy Team Totals"
     enemy_data.append(enemy_totals_info)
 
-    return render_to_response(  "search.html",
-                                {   "summoner_name": summoner_name,
-                                    "ally_data": ally_data,
-                                    "ally_totals_info": ally_totals_info,
-                                    "enemy_data": enemy_data,
-                                    "enemy_totals_info": enemy_totals_info  },
+    return render_to_response("search.html",
+                                {"summoner_name": summoner_name,
+                                "ally_data": ally_data,
+                                "ally_totals_info": ally_totals_info,
+                                "enemy_data": enemy_data,
+                                "enemy_totals_info": enemy_totals_info},
                                 context_instance=RequestContext(request))
+
+    """
+    except Exception as e:
+        #TODO: Catch the correct exception. We don't want to do this for EVERY exception.
+        return render_to_response("invalid_summoner_error.html",
+                                  {"summoner_name": summoner_name},
+                                  context_instance=RequestContext(request))
+    """
+
 def about(request):
     return render_to_response("about.html",
                               locals(),

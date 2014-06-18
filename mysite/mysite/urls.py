@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     # Examples:
      url(r'^$', 'points.views.home', name='home'),
      url(r'^search/$', 'points.views.search', name='search'),
+     url(r'^about/$', 'points.views.about', name='about'),
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),

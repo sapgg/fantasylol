@@ -85,3 +85,9 @@ def search(request):
         return render_to_response(  "invalid_summoner_error.html",
                             {   "summoner_name": summoner_name  },
                             context_instance=RequestContext(request))
+
+
+def about(request):
+    return render_to_response("about.html",
+                              locals(),
+                              context_instance=RequestContext(request))

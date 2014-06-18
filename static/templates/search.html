@@ -15,6 +15,11 @@
         <li>B = Bonus = +2 pts if K+A >= 10</li>
     </ul>
     <h2>My Team</h2>
+    {% if win %}
+    <p> VICTORY!! </p>
+    {% else %}
+    <p> DEFEAT!! </p>
+    {% endif %}
         {% for player in ally_data %}
             <p>{{ player.name }} | {{ player.champion }} | K = {{player.kills}}
                 | D = {{player.deaths}} | A = {{player.assists}}
@@ -25,6 +30,12 @@
         {% endfor %}
 
     <h2>Enemy Team</h2>
+
+    {% if win %}
+    <p> DEFEAT!! </p>
+    {% else %}
+    <p> VICTORY!! </p>
+    {% endif %}
         {% for player in enemy_data %}
             <p>{{ player.name }} | {{ player.champion }} | K = {{player.kills}}
                 | D = {{player.deaths}} | A = {{player.assists}}

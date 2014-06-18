@@ -185,17 +185,17 @@ class RawStat(object):
     doubleKills	            int
     firstBlood	            int
     gold	                int
-    goldEarned	    int
-    goldSpent	    int
-    item0	        int
-    item1	        int
-    item2	        int
-    item3	        int
-    item4	        int
-    item5	        int
-    item6	        int
-    itemsPurchased	int
-    killingSprees	int
+    goldEarned	            int
+    goldSpent	            int
+    item0	                int
+    item1	                int
+    item2	                int
+    item3	                int
+    item4	                int
+    item5	                int
+    item6	                int
+    itemsPurchased	        int
+    killingSprees	        int
     largestCriticalStrike	    int
     largestKillingSpree	        int
     largestMultiKill	        int

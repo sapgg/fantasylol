@@ -39,44 +39,49 @@ def search(request):
 
     priot = PyRiot(API_KEY)
     champions = priot.static_champions(NORTH_AMERICA)
+    try:
+        summoner = priot.summoner_get_by_name(NORTH_AMERICA, summoner_name.lower())
+        last_game = priot.recent_games(NORTH_AMERICA, summoner.id)[0]
+        summoners_champ = champions[last_game.champion_id]
+        fellow_players = last_game.fellow_players
+        summoner_names = get_summoner_names(priot, fellow_players)
+        my_team, enemy_team = split_teams(fellow_players, last_game.team_id)
 
-    summoner = priot.summoner_get_by_name(NORTH_AMERICA, summoner_name.lower())
-    last_game = priot.recent_games(NORTH_AMERICA, summoner.id)[0]
-    summoners_champ = champions[last_game.champion_id]
-    fellow_players = last_game.fellow_players
-    summoner_names = get_summoner_names(priot, fellow_players)
-    my_team, enemy_team = split_teams(fellow_players, last_game.team_id)
+        ally_data = [Info(summoner_name,
+                summoners_champ.name,
+                get_summoner_pts(priot, summoner.id, last_game.game_id))]
+        for player in my_team:
+            ally_data.append(Info(summoner_names[player.summoner_id],
+                             champions[player.champion_id].name,
+                             get_summoner_pts(priot, player.summoner_id, last_game.game_id)))
 
-    ally_data = [Info(summoner_name,
-            summoners_champ.name,
-            get_summoner_pts(priot, summoner.id, last_game.game_id))]
-    for player in my_team:
-        ally_data.append(Info(summoner_names[player.summoner_id],
-                         champions[player.champion_id].name,
-                         get_summoner_pts(priot, player.summoner_id, last_game.game_id)))
+        ally_total = 0
+        for member in ally_data:
+            if member.points != -100:
+                ally_total += member.points
 
-    ally_total = 0
-    for member in ally_data:
-        if member.points != -100:
-            ally_total += member.points
+        time.sleep(10)
 
-    time.sleep(10)
+        enemy_data = []
+        for player in enemy_team:
+            enemy_data.append(Info(summoner_names[player.summoner_id],
+                             champions[player.champion_id].name,
+                             get_summoner_pts(priot, player.summoner_id, last_game.game_id)))
 
-    enemy_data = []
-    for player in enemy_team:
-        enemy_data.append(Info(summoner_names[player.summoner_id],
-                         champions[player.champion_id].name,
-                         get_summoner_pts(priot, player.summoner_id, last_game.game_id)))
+        enemy_total = 0
+        for enemy in enemy_data:
+            if enemy.points != -100:
+                enemy_total += enemy.points
 
-    enemy_total = 0
-    for enemy in enemy_data:
-        if enemy.points != -100:
-            enemy_total += enemy.points
-
-    return render_to_response(  "search.html",
-                                {   "summoner_name": summoner_name,
-                                    "ally_data": ally_data,
-                                    "ally_total": ally_total,
-                                    "enemy_data": enemy_data,
-                                    "enemy_total": enemy_total      },
-                                context_instance=RequestContext(request))
+        return render_to_response(  "search.html",
+                                    {   "summoner_name": summoner_name,
+                                        "ally_data": ally_data,
+                                        "ally_total": ally_total,
+                                        "enemy_data": enemy_data,
+                                        "enemy_total": enemy_total      },
+                                    context_instance=RequestContext(request))
+    except Exception as e:
+        #TODO: Catch the correct exception. We don't want to do this for EVERY exception.
+        return render_to_response(  "invalid_summoner_error.html",
+                            {   "summoner_name": summoner_name  },
+                            context_instance=RequestContext(request))

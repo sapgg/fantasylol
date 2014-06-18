@@ -3,15 +3,36 @@
 {% block content %}
 <div class="col-sm-12" style="text-align: center;">
     <h2> Here are the fantasy points for {{summoner_name}}'s last game: </h2>
+    <p>Scoring</p>
+    <ul>
+        <li>K = Kills = 2 pts</li>
+        <li>D = Deaths = -0.5 pts</li>
+        <li>A = Assists = 1.5 pts</li>
+        <li>CS = Creep Score = 0.01 pts</li>
+        <li>T = Triples = +2 pts/ea</li>
+        <li>Q = Quadras = +5 pts/ea</li>
+        <li>P = Pentas = +10 pts/ea</li>
+        <li>B = Bonus = +2 pts if K+A >= 10</li>
+    </ul>
     <h2>My Team</h2>
         {% for player in ally_data %}
-            <p>{{ player.name }} | {{ player.champion }} | {{ player.points }}</p>
+            <p>{{ player.name }} | {{ player.champion }} | K = {{player.kills}}
+                | D = {{player.deaths}} | A = {{player.assists}}
+                | CS = {{player.creep_score}} | T = {{player.triples}}
+                | Q = {{player.quadras}} | P = {{player.pentas}}
+                | B = {{player.bonus}}
+                | FANTASY POINTS = {{player.fantasy_points}}</p>
         {% endfor %}
-        <p><em>Team total: {{ ally_total }}</em></p>
+
     <h2>Enemy Team</h2>
         {% for player in enemy_data %}
-            <p>{{ player.name }} | {{ player.champion }} | {{ player.points }}</p>
+            <p>{{ player.name }} | {{ player.champion }} | K = {{player.kills}}
+                | D = {{player.deaths}} | A = {{player.assists}}
+                | CS = {{player.creep_score}} | T = {{player.triples}}
+                | Q = {{player.quadras}} | P = {{player.pentas}}
+                | B = {{player.bonus}}
+                | FANTASY POINTS = {{player.fantasy_points}}</p>
         {% endfor %}
-        <p><em>Enemy team total: {{ enemy_total }}</em></p>
+
 </div>
 {% endblock %}

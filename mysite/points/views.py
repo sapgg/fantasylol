@@ -3,7 +3,7 @@ import time
 from django.shortcuts import render_to_response, RequestContext, HttpResponseRedirect
 from .forms import PointForm
 from pyriot.wrapper import PyRiot, NORTH_AMERICA
-from pyriot.riot import split_teams, get_summoner_pts, get_summoner_names
+from pyriot.riot import split_teams, get_summoner_names, SummGameInfo, get_summ_info, calc_totals
 
 API_KEY = 'a22e3d70-3a1d-4b70-8563-005066d86de6'
 summoner_name = ""
@@ -31,11 +31,6 @@ def home(request):
 def search(request):
     # process summoner name
     global summoner_name
-    class Info(object):
-        def __init__(self, name, champion, points):
-            self.name = name
-            self.champion = champion
-            self.points = points
 
     priot = PyRiot(API_KEY)
     champions = priot.static_champions(NORTH_AMERICA)
@@ -47,36 +42,42 @@ def search(request):
     summoner_names = get_summoner_names(priot, fellow_players)
     my_team, enemy_team = split_teams(fellow_players, last_game.team_id)
 
-    ally_data = [Info(summoner_name,
-            summoners_champ.name,
-            get_summoner_pts(priot, summoner.id, last_game.game_id))]
-    for player in my_team:
-        ally_data.append(Info(summoner_names[player.summoner_id],
-                         champions[player.champion_id].name,
-                         get_summoner_pts(priot, player.summoner_id, last_game.game_id)))
+    summ_info = get_summ_info(priot, summoner.id, last_game.game_id)
+    summ_info.calc_fantasy_pts()
+    summ_info.name = summoner_name
+    summ_info.champion = summoners_champ.name
+    ally_data = [summ_info]
 
-    ally_total = 0
-    for member in ally_data:
-        if member.points != -100:
-            ally_total += member.points
+    for player in my_team:
+        summ_info = get_summ_info(priot, player.summoner_id, last_game.game_id)
+        print summ_info
+        summ_info.set_name_champ(summoner_names[player.summoner_id], champions[player.champion_id].name)
+        summ_info.calc_fantasy_pts()
+        ally_data.append(summ_info)
 
     time.sleep(10)
 
     enemy_data = []
     for player in enemy_team:
-        enemy_data.append(Info(summoner_names[player.summoner_id],
-                         champions[player.champion_id].name,
-                         get_summoner_pts(priot, player.summoner_id, last_game.game_id)))
+        summ_info = SummGameInfo()
+        summ_info = get_summ_info(priot, player.summoner_id, last_game.game_id)
 
-    enemy_total = 0
-    for enemy in enemy_data:
-        if enemy.points != -100:
-            enemy_total += enemy.points
+        summ_info.name = summoner_names[player.summoner_id]
+        summ_info.champion = champions[player.champion_id].name
+        summ_info.calc_fantasy_pts()
+        enemy_data.append(summ_info)
+
+    ally_totals_info = calc_totals(ally_data)
+    ally_totals_info.name = "Allied Team Totals"
+    ally_data.append(ally_totals_info)
+    enemy_totals_info = calc_totals(enemy_data)
+    enemy_totals_info.name = "Enemy Team Totals"
+    enemy_data.append(enemy_totals_info)
 
     return render_to_response(  "search.html",
                                 {   "summoner_name": summoner_name,
                                     "ally_data": ally_data,
-                                    "ally_total": ally_total,
+                                    "ally_totals_info": ally_totals_info,
                                     "enemy_data": enemy_data,
-                                    "enemy_total": enemy_total      },
+                                    "enemy_totals_info": enemy_totals_info  },
                                 context_instance=RequestContext(request))

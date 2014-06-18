@@ -3,10 +3,10 @@
 {% block jumbotron %}
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
-      <div class="container">
+      <div class="container" align="center">
         <h1>Fantasy League of Legends...</h1>
-        <h1>for players!</h1>
-        <p>This website is under construction! Pretty soon you'll be able to earn fantasy points for playing League, just like the pros!</p>
+        <h1 style="color:rgb(219, 0, 0); padding-bottom:50px">for everyday players!</h1>
+        <p style="padding-bottom:20px">This website is under construction! Pretty soon you'll be able to earn fantasy points for playing League, just like the pros!</p>
         <p><a class="btn btn-primary btn-lg" role="button">Learn more &raquo;</a></p>
       </div>
     </div>
@@ -29,11 +29,13 @@
           <!--<p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>-->
         <!--</div>-->
 
-        <div class="col-sm-10">
-          <h1>Calculate Fantasy Points</h1>
-          <form method="POST" action=""> {% csrf_token %}
-            {{ form.as_p }}
-          <input type="submit">
+        <div class="container" align="center">
+          <h1 style="font-size:50px">Calculate Fantasy Points</h1>
+          <form method="POST" action="" style="padding-bottom:200px"> {% csrf_token %}
+         <!--  <input type="text" name="sum_name">-->
+         {{ form }}
+          <input type="submit" class="btn btn-primary btn-sm">
+
           </form>
         </div>
 

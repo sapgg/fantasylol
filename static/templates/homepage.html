@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block jumbotron %}
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container" align="center">
+        <h1>Fantasy League of Legends...</h1>
+        <h1 style="color:rgb(219, 0, 0); padding-bottom:50px">for everyday players!</h1>
+        <p style="padding-bottom:20px">This website is under construction! Pretty soon you'll be able to earn fantasy points for playing League, just like the pros!</p>
+      </div>
+        <div class="container" align="center">
+          <h1 style="font-size:50px">Calculate Fantasy Points</h1>
+          <form method="POST" action="" style="padding-bottom:100px"> {% csrf_token %}
+         <!--  <input type="text" name="sum_name">-->
+         {{ form }}
+          <input type="submit" class="btn btn-primary btn-sm">
+
+          </form>
+                    <p><a class="btn btn-primary btn-lg" role="button">Learn more &raquo;</a></p>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+
+{% endblock %}

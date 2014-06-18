@@ -23,7 +23,7 @@ def home(request):
         #### so we don't need to use global variable
         return HttpResponseRedirect('/search/')
     else:
-        return render_to_response("point.html",
+        return render_to_response("homepage.html",
                               locals(),
                               context_instance=RequestContext(request))
 

@@ -16,8 +16,8 @@ def home(request):
         global summoner_name
         summoner_name = (form.cleaned_data['summoner_name']).replace(" ", "")
 
-        #save_it = form.save(commit=False)
-        #save_it.save()
+        save_it = form.save(commit=False)
+        save_it.save()
 
         #### NEED TO FIGURE OUT HOW TO PASS ARGUMENTS THROUGH HttpResponseRedirect
         #### so we don't need to use global variable

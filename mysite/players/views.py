@@ -17,6 +17,8 @@ def home(request):
         summoner_name = (form.cleaned_data['summoner_name']).replace(" ", "")
 
         save_it = form.save(commit=False)
+        #save variables in here
+        save_it.kills = 4
         save_it.save()
 
         #### NEED TO FIGURE OUT HOW TO PASS ARGUMENTS THROUGH HttpResponseRedirect

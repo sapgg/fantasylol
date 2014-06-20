@@ -15,6 +15,11 @@ body{
     margin:0
 }
 
+/* this is where i hide the variables */
+label[for=id_kills], input[id=id_kills] {
+    display:none
+}
+
 .scoring{
     margin-left:0px;
     margin-top:63px;
